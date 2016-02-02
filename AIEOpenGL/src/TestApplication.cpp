@@ -21,6 +21,10 @@ TestApplication::TestApplication()
 TestApplication::~TestApplication() 
 {
 	l_Planets.clear();
+
+	delete Sun;
+	delete Earth;
+	delete Mars;
 }
 
 bool TestApplication::startup() 
@@ -39,16 +43,13 @@ bool TestApplication::startup()
 	//add planets
 
 	//Sun
-	Sun = new Planet(nullptr, glm::vec3(0), glm::vec4(1, .6f, 0, 1), 1.f, 5.f);
-	l_Planets.push_back(Sun);
+	Sun = new Planet(nullptr, glm::vec3(0), glm::vec4(1, .6f, 0, 1), .5f, 1.f);
 
 	//earth
-	Earth = new Planet(Sun, glm::vec3(0), glm::vec4(1, .6f, 0, 1), 1.f, 1.f);
-	l_Planets.push_back(Earth);
+	Earth = new Planet(Sun, glm::vec3(5,0,0), glm::vec4(0, .2f, 1, 1), 1.f, .5f);
 
 	//Mars
-	Mars = new Planet(Earth, glm::vec3(0), glm::vec4(1, .6f, 0, 1), 1.f, 1.f);
-	l_Planets.push_back(Mars);
+	Mars = new Planet(Earth, glm::vec3(1,0,0), glm::vec4(1, .6f, 0, 1), 2.f, .3f);
 
 	m_pickPosition = glm::vec3(0);
 
@@ -87,10 +88,9 @@ bool TestApplication::update(float deltaTime)
 	Gizmos::clear();
 
 	//Update Planets
-	for each (Planet* var in l_Planets)
-	{
-		var->Update(deltaTime);
-	}
+	Sun->Update(deltaTime);
+	Earth->Update(deltaTime);
+	Mars->Update(deltaTime);
 
 	// an example of mouse picking
 	if (glfwGetMouseButton(m_window, 0) == GLFW_PRESS) 
@@ -105,14 +105,14 @@ bool TestApplication::update(float deltaTime)
 	Gizmos::addTransform(glm::translate(m_pickPosition));
 
 	// ...for now let's add a grid to the gizmos
-	//for (int i = 0; i < 21; ++i) 
-	//{
-	//	Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
-	//		i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-	//
-	//	Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
-	//		i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-	//}
+	for (int i = 0; i < 21; ++i) 
+	{
+		Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
+			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
+	
+		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
+			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
+	}
 
 	// return true, else the application closes
 	return true;
@@ -124,10 +124,9 @@ void TestApplication::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Draw Planets
-	for each (Planet* var in l_Planets)
-	{
-		var->Draw();
-	}
+	Sun->Draw();
+	Earth->Draw();
+	Mars->Draw();
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());
