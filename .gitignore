@@ -1,0 +1,6 @@
+AIEOpenGL/.vs/
+*.opendb
+*.sdf
+AIEOpenGL/Debug/
+AIEOpenGL/Release/
+AIEOpenGL/bin/
