@@ -1,5 +1,4 @@
 
-#define GLM_SWIZZLE
 #include "Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>

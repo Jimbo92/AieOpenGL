@@ -30,6 +30,7 @@ private:
 
 	Planet* Sun;
 	Planet* Earth;
+	Planet* Mars;
 
 	// this is an example position for camera picking
 	glm::vec3	m_pickPosition;

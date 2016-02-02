@@ -39,12 +39,16 @@ bool TestApplication::startup()
 	//add planets
 
 	//Sun
-	Sun = new Planet(glm::vec3(0), glm::vec4(1, .5f, 0, 1), .3f, 3.f, glm::vec3(0,1,0), glm::vec3(0), false, false, 0);
-	l_Planets.push_front(Sun);
+	Sun = new Planet(nullptr, glm::vec3(0), glm::vec4(1, .6f, 0, 1), 1.f, 5.f);
+	l_Planets.push_back(Sun);
 
 	//earth
-	Earth = new Planet(glm::vec3(0,0,10), glm::vec4(0, 0.2f, 1, 1), 1.5f, 1.f, glm::vec3(0, 1, 0), glm::vec3(0), true, true, 1);
-	l_Planets.push_front(Earth);
+	Earth = new Planet(Sun, glm::vec3(0), glm::vec4(1, .6f, 0, 1), 1.f, 1.f);
+	l_Planets.push_back(Earth);
+
+	//Mars
+	Mars = new Planet(Earth, glm::vec3(0), glm::vec4(1, .6f, 0, 1), 1.f, 1.f);
+	l_Planets.push_back(Mars);
 
 	m_pickPosition = glm::vec3(0);
 
@@ -101,13 +105,14 @@ bool TestApplication::update(float deltaTime)
 	Gizmos::addTransform(glm::translate(m_pickPosition));
 
 	// ...for now let's add a grid to the gizmos
-	for (int i = 0; i < 21; ++i) {
-		Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
-			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-
-		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
-			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-	}
+	//for (int i = 0; i < 21; ++i) 
+	//{
+	//	Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
+	//		i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
+	//
+	//	Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
+	//		i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
+	//}
 
 	// return true, else the application closes
 	return true;
