@@ -2,6 +2,15 @@
 
 struct GLFWwindow;
 
+#define Color_Red glm::vec4(1,0,0,1)
+#define Color_Yellow glm::vec4(1,1,0,1)
+#define Color_Green glm::vec4(0,1,0,1)
+#define Color_Blue glm::vec4(0,0,1,1)
+#define Color_Orange glm::vec4(1,.5f,0,1)
+#define Color_White glm::vec4(1,1,1,1)
+#define Color_Black glm::vec4(0,0,0,1)
+#define Color_Cyan glm::vec4(0,0.5f,0.5f,1)
+
 class BaseApplication {
 public:
 
