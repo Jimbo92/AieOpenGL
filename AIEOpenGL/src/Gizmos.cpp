@@ -517,7 +517,7 @@ void Gizmos::addArcRing(const glm::vec3& a_center, float a_rotation,
 }
 
 void Gizmos::addSphere(const glm::vec3& a_center, float a_radius, int a_rows, int a_columns, const glm::vec4& a_fillColour, 
-								const glm::mat4* a_transform /*= nullptr*/, float a_longMin /*= 0.f*/, float a_longMax /*= 360*/, 
+								const glm::mat4* a_transform /*= nullptr*/, bool WireFrame, float a_longMin /*= 0.f*/, float a_longMax /*= 360*/, 
 								float a_latMin /*= -90*/, float a_latMax /*= 90*/) {
 	float inverseRadius = 1/a_radius;
 	//Invert these first as the multiply is slightly quicker
@@ -567,13 +567,19 @@ void Gizmos::addSphere(const glm::vec3& a_center, float a_radius, int a_rows, in
 			iNextFace = iNextFace - (a_columns);
 		}
 
-		addLine(a_center + v4Array[face], a_center + v4Array[face+a_columns], a_fillColour, a_fillColour);
+		if (WireFrame)
+		{
+			addLine(a_center + v4Array[face], a_center + v4Array[face + a_columns], glm::vec4(1, 1, 1, 1), glm::vec4(1, 1, 1, 1));
+		}
 		
 		if( face % a_columns == 0 && longitudinalRange < (glm::pi<float>() * 2))
 		{
 				continue;
 		}
-		addLine(a_center + v4Array[iNextFace+a_columns], a_center + v4Array[face+a_columns], a_fillColour, a_fillColour);
+		if (WireFrame)
+		{
+			addLine(a_center + v4Array[iNextFace + a_columns], a_center + v4Array[face + a_columns], glm::vec4(1, 1, 1, 1), glm::vec4(1, 1, 1, 1));
+		}
 
 		addTri( a_center + v4Array[iNextFace+a_columns], a_center + v4Array[face], a_center + v4Array[iNextFace], a_fillColour);
 		addTri( a_center + v4Array[iNextFace+a_columns], a_center + v4Array[face+a_columns], a_center + v4Array[face], a_fillColour);		

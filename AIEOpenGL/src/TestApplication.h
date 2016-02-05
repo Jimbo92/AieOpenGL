@@ -27,6 +27,10 @@ public:
 
 private:
 
+	bool b_inwireFrame = false;
+
+	unsigned int m_texture;
+
 	Camera*		m_camera;
 
 	std::list<Planet*> l_Planets;
@@ -62,6 +66,8 @@ private:
 
 	glm::vec3 m_positions[2];
 	glm::quat m_rotations[2];
+
+	glm::mat4 m_BeltRotationMatrix = glm::mat4(1);
 
 	// this is an example position for camera picking
 	glm::vec3	m_pickPosition;

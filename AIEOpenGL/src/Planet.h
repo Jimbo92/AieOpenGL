@@ -9,9 +9,12 @@ class Planet
 {
 public:
 	Planet() {};
-	Planet(Planet* Parent, glm::vec3 Location, glm::vec4 Color, float RotationRate, float Scale);
+	Planet(Planet* Parent, glm::vec3 Location, glm::vec4 Color, float OrbitRate, float Scale, float LocalRotation);
 
 	//Vars
+
+	bool b_WireFrameMode = false;
+
 	Planet*		m_Parent		= nullptr;
 	glm::vec3	v_Location		= glm::vec3(0);
 	float		f_Scale			= 3.f;
@@ -27,17 +30,18 @@ public:
 	float		f_RingOuterRadius = 0.f;
 	float		f_RingInnerRadius = 0.f;
 	glm::vec3	v_RingOffset	= glm::vec3(0);
+	bool		b_isMoon		= false;
 
 private:
 	glm::mat4 m_LocalMatrix = glm::mat4(1.f);
 	glm::mat4 m_WorldMatrix = glm::mat4(1.f);
-
+	glm::mat4 m_LocalRotationMatrix = glm::mat4(1.f);
 
 public:
 
 	void Update(float DeltaTime);
 
-	void Draw();
+	void Draw(bool inWireFrame = false);
 
 	void AddRing(float InnerRadius, float OutRadius, glm::vec3 Offset);
 

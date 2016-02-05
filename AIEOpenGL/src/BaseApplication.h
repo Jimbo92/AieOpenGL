@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 struct GLFWwindow;
 
 #define Color_Red glm::vec4(1,0,0,1)
@@ -8,6 +10,7 @@ struct GLFWwindow;
 #define Color_Blue glm::vec4(0,0,1,1)
 #define Color_Orange glm::vec4(1,.5f,0,1)
 #define Color_White glm::vec4(1,1,1,1)
+#define Color_Brown glm::vec4(0.3f,0.2f,0.f,1)
 #define Color_Black glm::vec4(0,0,0,1)
 #define Color_Cyan glm::vec4(0,0.5f,0.5f,1)
 

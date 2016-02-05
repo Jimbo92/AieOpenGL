@@ -1,25 +1,29 @@
 #include "Planet.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <GLFW/glfw3.h>
 
-Planet::Planet(Planet* Parent, glm::vec3 Location, glm::vec4 Color, float RotationRate, float Scale)
+Planet::Planet(Planet* Parent, glm::vec3 Location, glm::vec4 Color, float OrbitRate, float Scale, float LocalRotation)
 {
 	m_Parent = Parent;
 	v_Location = Location;
 	m_Color = Color;
-	f_RotationRate = RotationRate;
+	f_RotationRate = OrbitRate;
 	f_Scale = Scale;
+	f_localRotation = LocalRotation;
 }
 
 void Planet::Update(float DeltaTime)
 {
+
+
 	f_Rotation += (f_RotationRate / 5) * DeltaTime;
 
-	f_localRotation += f_RotationRate * DeltaTime;
-
 	//local rotations
+	m_LocalRotationMatrix = glm::rotate(m_LocalRotationMatrix, f_localRotation * DeltaTime, glm::vec3(0, 1, 0));
+
 	m_LocalMatrix = glm::rotate(f_Rotation, glm::vec3(0, 1, 0));
 	m_LocalMatrix = glm::translate(m_LocalMatrix, v_Location);
-	m_LocalMatrix = glm::rotate(m_LocalMatrix, f_localRotation, glm::vec3(0, 1, 0));
+	
 
 	if (m_Parent == nullptr)
 	{
@@ -40,13 +44,19 @@ void Planet::AddRing(float InnerRadius, float OutRadius, glm::vec3 Offset)
 	v_RingOffset = Offset;
 }
 
-void Planet::Draw()
+void Planet::Draw(bool inWireFrame)
 {
-	Gizmos::addSphere(m_WorldMatrix[3].xyz, f_Scale, 20, 20, m_Color, &m_WorldMatrix);
+	Gizmos::addSphere(m_WorldMatrix[3].xyz, f_Scale, 20, 20, m_Color, &m_LocalRotationMatrix, inWireFrame);
 
 	if (b_hasRing)
 	{
-		Gizmos::addRing(m_WorldMatrix[3].xyz, f_RingInnerRadius, f_RingOuterRadius, 20, Color_White, &m_WorldMatrix);
+		Gizmos::addRing(m_WorldMatrix[3].xyz, f_RingInnerRadius, f_RingOuterRadius, 20, Color_White);
+	}
+
+	//Draw Projection
+	if (inWireFrame && !b_isMoon)
+	{
+		Gizmos::addRing(glm::vec3(0), v_Location.x, v_Location.x + 0.05f, 64, glm::vec4(0.25, 0.25, 0.25, 1));
 	}
 }
 

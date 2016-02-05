@@ -70,7 +70,7 @@ public:
 
 	// Adds a Sphere at a given position, with a given number of rows, and columns, radius and a max and min long and latitude
 	static void		addSphere(const glm::vec3& a_center, float a_radius, int a_rows, int a_columns, const glm::vec4& a_fillColour, 
-							  const glm::mat4* a_transform = nullptr, float a_longMin = 0.f, float a_longMax = 360, 
+							  const glm::mat4* a_transform = nullptr, bool WireFrame = false, float a_longMin = 0.f, float a_longMax = 360, 
 							  float a_latMin = -90, float a_latMax = 90 );
 
 	// Adds a single Hermite spline curve
