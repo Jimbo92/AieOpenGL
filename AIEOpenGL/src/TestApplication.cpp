@@ -8,13 +8,9 @@
 #include "Camera.h"
 #include "Gizmos.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
-
 
 struct KeyFrame
 {
@@ -59,17 +55,8 @@ bool TestApplication::startup()
 	m_camera = new Camera(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
-	int imageWidth = 0, imageHeight = 0, imageFormat = 0;
-	unsigned char* data = stbi_load("./data/earth_diffuse.tga", &imageWidth, &imageHeight, &imageFormat, STBI_default);
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	stbi_image_free(data);
 
-
-	/*
+	
 	m_positions[0] = glm::vec3(10, 5, 10);
 	m_positions[1] = glm::vec3(-10, 0, -10);
 
@@ -91,8 +78,6 @@ bool TestApplication::startup()
 	m_ankleFrames[0].rotation = glm::quat(glm::vec3(-1, 0, 0));
 	m_ankleFrames[1].position = glm::vec3(0, -2.5f, 0);
 	m_ankleFrames[1].rotation = glm::quat(glm::vec3(0, 0, 0));
-
-	*/
 
 	//add planets
 	// Planet Paramaters:: Parents, Location, Color, orbit RotationRate, Scale, LocalRotation
@@ -154,8 +139,6 @@ bool TestApplication::startup()
 
 	m_pickPosition = glm::vec3(0);
 
-
-
 	return true;
 }
 
@@ -200,7 +183,7 @@ bool TestApplication::update(float deltaTime)
 	// clear the gizmos out for this frame
 	Gizmos::clear();
 
-	/*
+	
 
 	s_time = cos((float)glfwGetTime()) * 0.5f + 0.5f;
 
@@ -209,7 +192,6 @@ bool TestApplication::update(float deltaTime)
 	m_quatRotTest = glm::slerp(m_rotations[0], m_rotations[1], s_time);
 
 	m_TransformMatrix = glm::translate(m_currentPosition) * glm::toMat4(m_quatRotTest);
-
 
 	//hip animation
 	glm::vec3 p1 = (1.f - s_time) * m_hipFrames[0].position + s_time * m_hipFrames[1].position;
@@ -231,7 +213,7 @@ bool TestApplication::update(float deltaTime)
 	glm::quat r3 = glm::slerp(m_ankleFrames[0].rotation, m_ankleFrames[1].rotation, s_time);
 
 	m_ankleBone = m_kneeBone * glm::translate(p3) * glm::toMat4(r3);
-	*/
+	
 
 
 	//Update Planets
@@ -273,14 +255,14 @@ void TestApplication::draw()
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	/*
+	
 	Gizmos::addTransform(m_TransformMatrix);
 	Gizmos::addAABBFilled(m_currentPosition, glm::vec3(.5f), Color_Red, &m_TransformMatrix);
 
 	Gizmos::addAABBFilled(m_hipBone[3].xyz, glm::vec3(.5f), Color_Green, &m_hipBone);
 	Gizmos::addAABBFilled(m_kneeBone[3].xyz, glm::vec3(.5f), Color_Green, &m_kneeBone);
 	Gizmos::addAABBFilled(m_ankleBone[3].xyz, glm::vec3(.5f), Color_Green, &m_ankleBone);
-	*/
+	
 
 	//Draw Planets
 	for each (auto SolarBody in l_Planets)
