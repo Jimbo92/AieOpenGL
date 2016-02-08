@@ -59,12 +59,15 @@ bool GeometryApp::startup()
 							layout(location=1) in vec4 Colour; \
 							out vec4 vColour; \
 							uniform mat4 ProjectionView; \
-							void main() { vColour = Colour; gl_Position = ProjectionView * Position; }";
+							uniform float time; \
+							uniform float heightScale; \
+							void main() { vColour = Colour; vec4 P = Position; P.y += sin(time + Position.x) * heightScale; P.x += sin(time + Position.z) * heightScale / 2; gl_Position = ProjectionView * P; }";
 
 	const char* fsSource = "#version 410\n \
 							in vec4 vColour; \
 							out vec4 FragColor; \
-							void main() { FragColor = vColour; }";
+							uniform float time; \
+							void main() { FragColor = vColour; FragColor.xy += sin(time) * 1.5f; }";
 
 	int success = GL_FALSE;
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -97,7 +100,7 @@ bool GeometryApp::startup()
 	glDeleteShader(vertexShader);
 
 	//generate the grid
-	generateGrid(20, 20);
+	generateGrid(21, 21);
 
 	return true;
 }
@@ -125,7 +128,7 @@ bool GeometryApp::update(float deltaTime)
 	// clear the gizmos out for this frame
 	Gizmos::clear();
 
-
+	/*
 	// ...for now let's add a grid to the gizmos
 	for (int i = 0; i < 21; ++i) 
 	{
@@ -135,6 +138,7 @@ bool GeometryApp::update(float deltaTime)
 		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
 			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
 	}
+	*/
 
 
 	return true;
@@ -174,7 +178,7 @@ void GeometryApp::generateGrid(unsigned int rows, unsigned int cols)
 			//Triangle 2
 			auiIndices[index++] = r * cols + c;
 			auiIndices[index++] = (r + 1) * cols + (c + 1);
-			auiIndices[index++] = r * cols + (c + 1);
+			auiIndices[index++] = (r * cols) + (c + 1);
 		}
 	}
 
@@ -197,11 +201,8 @@ void GeometryApp::generateGrid(unsigned int rows, unsigned int cols)
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(vec4)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//IBO 
-	glGenBuffers(1, &m_IBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (rows - 1) * (cols - 1) * 6 * sizeof(UINT32), auiIndices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -217,14 +218,19 @@ void GeometryApp::draw()
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//bind shader //Maybe here?
+	//bind shader
 	glUseProgram(m_programID);
 	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "ProjectionView");
 	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(m_camera->getProjectionView()));
 
+	unsigned int timeUniform = glGetUniformLocation(m_programID, "time");
+	glUniform1f(timeUniform, glfwGetTime());
+
+	unsigned int heightScaleUniform = glGetUniformLocation(m_programID, "heightScale");
+	glUniform1f(heightScaleUniform, 1.0);
+
 	glBindVertexArray(m_VAO);
 	unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;
-	indexCount = 3;
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
 	// display the 3D gizmos
