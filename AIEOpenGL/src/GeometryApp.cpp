@@ -61,13 +61,13 @@ bool GeometryApp::startup()
 							uniform mat4 ProjectionView; \
 							uniform float time; \
 							uniform float heightScale; \
-							void main() { vColour = Colour; vec4 P = Position; P.y += sin(time + Position.x) * heightScale; P.x += sin(time + Position.z) * heightScale / 2; gl_Position = ProjectionView * P; }";
+							void main() { vColour = Colour; vec4 P = Position; P.y += sin((time - Position.x) * 0.5f) * heightScale; gl_Position = ProjectionView * P; }";
 
 	const char* fsSource = "#version 410\n \
 							in vec4 vColour; \
 							out vec4 FragColor; \
 							uniform float time; \
-							void main() { FragColor = vColour; FragColor.xy += sin(time) * 1.5f; }";
+							void main() { FragColor = vColour; }";
 
 	int success = GL_FALSE;
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -99,8 +99,6 @@ bool GeometryApp::startup()
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
 
-	//generate the grid
-	generateGrid(21, 21);
 
 	return true;
 }
@@ -127,6 +125,10 @@ bool GeometryApp::update(float deltaTime)
 
 	// clear the gizmos out for this frame
 	Gizmos::clear();
+
+
+	//generate the grid
+	generateGrid(128, 128);
 
 	/*
 	// ...for now let's add a grid to the gizmos
@@ -156,7 +158,7 @@ void GeometryApp::generateGrid(unsigned int rows, unsigned int cols)
 		{
 			aoVertices[r * cols + c].position = glm::vec4((float)c, 0, (float)r, 1);
 
-			vec3 color = glm::vec3(sinf((c / (float)(cols - 1)) * (r / (float)(rows - 1))));
+			vec3 color = glm::vec3(sin((glfwGetTime() - aoVertices[r * cols + c].position.x) * 0.5f) * 1.f);
 
 			aoVertices[r * cols + c].color = glm::vec4(color, 1);
 		}
@@ -227,7 +229,7 @@ void GeometryApp::draw()
 	glUniform1f(timeUniform, glfwGetTime());
 
 	unsigned int heightScaleUniform = glGetUniformLocation(m_programID, "heightScale");
-	glUniform1f(heightScaleUniform, 1.0);
+	glUniform1f(heightScaleUniform, 1.1);
 
 	glBindVertexArray(m_VAO);
 	unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;

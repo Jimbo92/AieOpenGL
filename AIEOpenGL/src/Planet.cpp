@@ -14,8 +14,6 @@ Planet::Planet(Planet* Parent, glm::vec3 Location, glm::vec4 Color, float OrbitR
 
 void Planet::Update(float DeltaTime)
 {
-
-
 	f_Rotation += (f_RotationRate / 5) * DeltaTime;
 
 	//local rotations
@@ -60,7 +58,7 @@ void Planet::Draw(bool inWireFrame)
 	}
 }
 
-
 Planet::~Planet()
 {
+
 }
