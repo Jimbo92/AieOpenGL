@@ -5,5 +5,4 @@ uniform float time;
 void main() 
 { 
 	FragColor = vColour; 
-	FragColor.x += sin(time);
 }

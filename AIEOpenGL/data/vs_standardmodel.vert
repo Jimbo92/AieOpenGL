@@ -10,7 +10,5 @@ void main()
 { 	
 	vColour = Colour; 
 	vec4 P = Position;
-	P.y += sin((time + Position.z) * 1.5f) * heightScale;
-	P.y += sin((time + Position.x) * 1.5f) * heightScale;
 	gl_Position = ProjectionView * P; 
 }

@@ -45,6 +45,9 @@
     <ClCompile Include="src\tiny_obj_loader.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h">
@@ -74,12 +77,21 @@
     <ClInclude Include="src\tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\vshader.vert">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="data\fshader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\fs_standardmodel.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\vs_standardmodel.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
