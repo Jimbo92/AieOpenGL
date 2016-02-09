@@ -8,6 +8,9 @@
 #include "Camera.h"
 #include "Gizmos.h"
 
+#include <fstream>
+
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -23,11 +26,51 @@ struct Vertex
 
 GeometryApp::GeometryApp() : m_camera(nullptr)
 {
-
 }
 
 GeometryApp::~GeometryApp()
 {
+
+}
+
+void GeometryApp::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
+{
+	m_gl_info.resize(shapes.size());
+
+	for (unsigned int mesh_index = 0; mesh_index < shapes.size(); ++mesh_index)
+	{
+		glGenVertexArrays(1, &m_gl_info[mesh_index].m_VAO);
+		glGenBuffers(1, &m_gl_info[mesh_index].m_VBO);
+		glGenBuffers(1, &m_gl_info[mesh_index].m_IBO);
+		glBindVertexArray(m_gl_info[mesh_index].m_VAO);
+
+		unsigned int float_count = shapes[mesh_index].mesh.positions.size();
+		float_count += shapes[mesh_index].mesh.normals.size();
+		float_count += shapes[mesh_index].mesh.texcoords.size();
+
+		std::vector<float> vertex_data;
+		vertex_data.reserve(float_count);
+
+		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.positions.begin(), shapes[mesh_index].mesh.positions.end());
+		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.normals.begin(), shapes[mesh_index].mesh.normals.end());
+
+		m_gl_info[mesh_index].m_index_count = shapes[mesh_index].mesh.indices.size();
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_gl_info[mesh_index].m_VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertex_data.size() * sizeof(float), vertex_data.data(), GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_gl_info[mesh_index].m_IBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shapes[mesh_index].mesh.indices.size() * sizeof(unsigned int), shapes[mesh_index].mesh.indices.data(), GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0); //position
+		glEnableVertexAttribArray(1); // normal data
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 0, (void*) (sizeof(float)*shapes[mesh_index].mesh.positions.size()));
+
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
 
 }
 
@@ -54,20 +97,11 @@ bool GeometryApp::startup()
 	//stbi_image_free(data);
 
 	//Create Shaders//===============================================================================================//
-	const char* vsSource = "#version 410\n \
-							layout(location=0) in vec4 Position; \
-							layout(location=1) in vec4 Colour; \
-							out vec4 vColour; \
-							uniform mat4 ProjectionView; \
-							uniform float time; \
-							uniform float heightScale; \
-							void main() { vColour = Colour; vec4 P = Position; P.y += sin((time - Position.x) * 0.5f) * heightScale; gl_Position = ProjectionView * P; }";
+	std::string vertShader = vShader.ReadShader("data/vshader.vert");
+	std::string fragShader = vShader.ReadShader("data/fshader.frag");
 
-	const char* fsSource = "#version 410\n \
-							in vec4 vColour; \
-							out vec4 FragColor; \
-							uniform float time; \
-							void main() { FragColor = vColour; }";
+	const char* vsSource = vertShader.c_str();
+	const char* fsSource = fragShader.c_str();
 
 	int success = GL_FALSE;
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -100,6 +134,18 @@ bool GeometryApp::startup()
 	glDeleteShader(vertexShader);
 
 
+	//===================//Load OBJ models//==============================//
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string err;
+	bool successful = tinyobj::LoadObj(shapes, materials, err, "data/Dragon.obj");
+	if (!successful)
+	{
+		std::cout << "Error With Model Load";
+	}
+
+	createOpenGLBuffers(shapes);
+
 	return true;
 }
 
@@ -128,7 +174,7 @@ bool GeometryApp::update(float deltaTime)
 
 
 	//generate the grid
-	generateGrid(128, 128);
+	generateGrid(64, 64);
 
 	/*
 	// ...for now let's add a grid to the gizmos
@@ -158,9 +204,10 @@ void GeometryApp::generateGrid(unsigned int rows, unsigned int cols)
 		{
 			aoVertices[r * cols + c].position = glm::vec4((float)c, 0, (float)r, 1);
 
-			vec3 color = glm::vec3(sin((glfwGetTime() - aoVertices[r * cols + c].position.x) * 0.5f) * 1.f);
+			vec3 color = glm::vec3(sin((glfwGetTime() + aoVertices[r * cols + c].position.x) * 0.5f) * 1.f);
+			vec3 color2 = glm::vec3(sin((glfwGetTime() + aoVertices[r * cols + c].position.z) * 0.5f) * 1.f);
 
-			aoVertices[r * cols + c].color = glm::vec4(color, 1);
+			aoVertices[r * cols + c].color = glm::vec4(color, 1) + glm::vec4(color2, 1);
 		}
 	}
 
@@ -230,6 +277,12 @@ void GeometryApp::draw()
 
 	unsigned int heightScaleUniform = glGetUniformLocation(m_programID, "heightScale");
 	glUniform1f(heightScaleUniform, 1.1);
+
+	for (unsigned int i = 0; i < m_gl_info.size(); ++i)
+	{
+		glBindVertexArray(m_gl_info[i].m_VAO);
+		glDrawElements(GL_TRIANGLES, m_gl_info[i].m_index_count, GL_UNSIGNED_INT, 0);
+	}
 
 	glBindVertexArray(m_VAO);
 	unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;

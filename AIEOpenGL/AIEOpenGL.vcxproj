@@ -26,7 +26,9 @@
     <ClCompile Include="src\gl_core_4_4.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Planet.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\TestApplication.cpp" />
+    <ClCompile Include="src\tiny_obj_loader.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h" />
@@ -35,7 +37,13 @@
     <ClInclude Include="src\Gizmos.h" />
     <ClInclude Include="src\gl_core_4_4.h" />
     <ClInclude Include="src\Planet.h" />
+    <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\TestApplication.h" />
+    <ClInclude Include="src\tiny_obj_loader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\fshader.frag" />
+    <None Include="data\vshader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63494F4E-79FA-48AD-AA6C-BDF1FF1619FD}</ProjectGuid>
