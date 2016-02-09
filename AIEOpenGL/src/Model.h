@@ -31,7 +31,7 @@ class Model
 {
 public:
 	Model() {}
-	Model(const char* Filepath, Shader* shader);
+	Model(const char* Filepath, Shader* shader, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
 	~Model();
 
 	void createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes);
@@ -41,6 +41,10 @@ public:
 	std::string err;
 
 	std::vector<OpenGLInfo> m_gl_info;
+
+	glm::vec3 m_Location;
+
+	glm::vec3 m_Scale;
 
 	void Draw(Camera* camera);
 	void Update(float DeltaTime);

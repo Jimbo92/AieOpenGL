@@ -12,6 +12,7 @@
 
 #include <Shader.h>
 #include <tiny_obj_loader.h>
+#include <Texture.h>
 
 #include <glm\gtc\quaternion.hpp>
 #include <glm\gtx\quaternion.hpp>

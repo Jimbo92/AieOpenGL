@@ -2,8 +2,10 @@
 
 using namespace std;
 
-Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath)
+Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile)
 {
+	m_textureFile = TextureFile;
+
 	m_VertShader = LoadShader(VertexShaderPath);
 	m_FragShader = LoadShader(FragmentShaderPath);
 
@@ -45,13 +47,29 @@ Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath)
 	glDeleteShader(FragShader);
 }
 
-void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location)
+void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 scale)
 {
 	//bind shader
 	glUseProgram(m_programID);
 	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "ProjectionView");
 
-	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(CurrentCamera->getProjectionView()));
+	LocalMatrix[3] = glm::vec4(location, 1);
+	LocalMatrix[0][0] = scale.x;
+	LocalMatrix[1][1] = scale.y;
+	LocalMatrix[2][2] = scale.z;
+
+	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(CurrentCamera->getProjectionView() * LocalMatrix));
+
+	//set texture slot
+	if (m_textureFile != nullptr)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_textureFile->m_texture);
+	}
+
+	//tell the shader where it is
+	projectionViewUniform = glGetUniformLocation(m_programID, "diffuse");
+	glUniform1i(projectionViewUniform, 0);
 
 	unsigned int timeUniform = glGetUniformLocation(m_programID, "time");
 	glUniform1f(timeUniform, glfwGetTime());

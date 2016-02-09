@@ -29,6 +29,7 @@
     <ClCompile Include="src\Planet.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\TestApplication.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\tiny_obj_loader.cc" />
   </ItemGroup>
   <ItemGroup>
@@ -41,13 +42,16 @@
     <ClInclude Include="src\Planet.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\TestApplication.h" />
+    <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\fshader.frag" />
     <None Include="data\fs_standardmodel.frag" />
+    <None Include="data\fs_texture.frag" />
     <None Include="data\vshader.vert" />
     <None Include="data\vs_standardmodel.vert" />
+    <None Include="data\vs_texture.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63494F4E-79FA-48AD-AA6C-BDF1FF1619FD}</ProjectGuid>

@@ -2,7 +2,7 @@
 
 
 
-Model::Model(const char* FilePath, Shader* shader)
+Model::Model(const char* FilePath, Shader* shader, glm::vec3 InitialLocation, glm::vec3 InitialScale)
 {
 	bool successful = tinyobj::LoadObj(shapes, materials, err, FilePath);
 	if (!successful)
@@ -22,6 +22,9 @@ Model::Model(const char* FilePath, Shader* shader)
 	createOpenGLBuffers(shapes);
 
 	ModelShader = shader;
+
+	m_Location = InitialLocation;
+	m_Scale = InitialScale;
 }
 
 void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
@@ -74,7 +77,7 @@ void Model::Draw(Camera* camera)
 {
 	if (ModelShader != nullptr)
 	{
-		ModelShader->DrawShader(camera, glm::vec3(5,5,0));
+		ModelShader->DrawShader(camera, m_Location, m_Scale);
 	}
 
 	for (unsigned int i = 0; i < m_gl_info.size(); ++i)

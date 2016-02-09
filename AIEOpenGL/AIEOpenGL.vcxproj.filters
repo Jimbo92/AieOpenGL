@@ -48,6 +48,9 @@
     <ClCompile Include="src\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h">
@@ -80,6 +83,9 @@
     <ClInclude Include="src\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\vshader.vert">
@@ -92,6 +98,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="data\vs_standardmodel.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\fs_texture.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\vs_texture.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

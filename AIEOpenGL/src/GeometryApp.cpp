@@ -10,8 +10,6 @@
 
 #include <fstream>
 
-
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 using glm::vec3;
@@ -47,23 +45,15 @@ bool GeometryApp::startup()
 	m_camera = new Camera(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
-	
-	int imageWidth = 0, imageHeight = 0, imageFormat = 0;
-	unsigned char* data = stbi_load("./data/earth_diffuse.tga", &imageWidth, &imageHeight, &imageFormat, STBI_default);
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	stbi_image_free(data);
-
-
 	//===================//Load OBJ models//==============================//
 	Shader* CoolShader = new Shader("./data/vshader.vert", "./data/fshader.frag");
 	Shader* NormalShader = new Shader("./data/vs_standardmodel.vert", "./data/fs_standardmodel.frag");
+	Texture* earthTexture = new Texture("./data/earth_diffuse.jpg");
 
-	LucyModel = new Model("./data/Lucy.obj", CoolShader);
-	BunnyModel = new Model("./data/Bunny.obj", NormalShader);
+	Shader* TextureShader = new Shader("./data/vs_texture.vert", "./data/fs_texture.frag", earthTexture);
+
+	LucyModel = new Model("./data/Lucy.obj", CoolShader, glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
+	BunnyModel = new Model("./data/Bunny.obj", TextureShader, glm::vec3(0, -10, 0));
 
 	return true;
 }
