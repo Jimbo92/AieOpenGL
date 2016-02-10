@@ -24,6 +24,7 @@
     <ClCompile Include="src\GeometryApp.cpp" />
     <ClCompile Include="src\Gizmos.cpp" />
     <ClCompile Include="src\gl_core_4_4.c" />
+    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Planet.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="src\GeometryApp.h" />
     <ClInclude Include="src\Gizmos.h" />
     <ClInclude Include="src\gl_core_4_4.h" />
+    <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Planet.h" />
     <ClInclude Include="src\Shader.h" />
@@ -47,11 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="data\fshader.frag" />
-    <None Include="data\fs_standardmodel.frag" />
-    <None Include="data\fs_texture.frag" />
+    <None Include="data\Shaders\fs_texture.frag" />
+    <None Include="data\Shaders\fs_texture_norm.frag" />
+    <None Include="data\Shaders\vs_texture.vert" />
+    <None Include="data\Shaders\vs_texture_wave.vert" />
     <None Include="data\vshader.vert" />
-    <None Include="data\vs_standardmodel.vert" />
-    <None Include="data\vs_texture.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63494F4E-79FA-48AD-AA6C-BDF1FF1619FD}</ProjectGuid>

@@ -2,9 +2,10 @@
 
 using namespace std;
 
-Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile)
+Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile, Texture* NormalMap)
 {
 	m_textureFile = TextureFile;
+	m_textureNormal = NormalMap;
 
 	m_VertShader = LoadShader(VertexShaderPath);
 	m_FragShader = LoadShader(FragmentShaderPath);
@@ -47,16 +48,24 @@ Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Tex
 	glDeleteShader(FragShader);
 }
 
-void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 scale)
+void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 scale, glm::vec3 RotationAxis, float RotationAmount)
 {
 	//bind shader
 	glUseProgram(m_programID);
 	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "ProjectionView");
 
+	if (RotationAxis != glm::vec3(0))
+	{
+		RotMatrix = glm::rotate(RotationAmount, RotationAxis);
+	}
+
+	ScaleMatrix[0][0] = scale.x;
+	ScaleMatrix[1][1] = scale.y;
+	ScaleMatrix[2][2] = scale.z;
+
+	LocalMatrix = ScaleMatrix * RotMatrix;
+
 	LocalMatrix[3] = glm::vec4(location, 1);
-	LocalMatrix[0][0] = scale.x;
-	LocalMatrix[1][1] = scale.y;
-	LocalMatrix[2][2] = scale.z;
 
 	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(CurrentCamera->getProjectionView() * LocalMatrix));
 
@@ -66,13 +75,23 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_textureFile->m_texture);
 	}
-
-	//tell the shader where it is
 	projectionViewUniform = glGetUniformLocation(m_programID, "diffuse");
 	glUniform1i(projectionViewUniform, 0);
 
+	//Set normal map
+	if (m_textureNormal != nullptr)
+	{
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_textureNormal->m_texture);
+	}
+	projectionViewUniform = glGetUniformLocation(m_programID, "normal");
+	glUniform1i(projectionViewUniform, 1);
+
 	unsigned int timeUniform = glGetUniformLocation(m_programID, "time");
 	glUniform1f(timeUniform, glfwGetTime());
+
+	unsigned int lightdirUniform = glGetUniformLocation(m_programID, "lightdirection");
+	glUniform3f(lightdirUniform, m_light->m_lightDir.x, m_light->m_lightDir.y, m_light->m_lightDir.z);
 
 	unsigned int heightScaleUniform = glGetUniformLocation(m_programID, "heightScale");
 	glUniform1f(heightScaleUniform, 1.1);

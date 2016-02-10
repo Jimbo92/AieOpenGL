@@ -18,15 +18,20 @@
 
 #include "Camera.h"
 
+#include <Light.h>
+
 class Shader
 {
 public:
 
 	Shader() {}
-	Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile = nullptr);
+	Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile = nullptr, Texture* NormalMap = nullptr);
 	~Shader();
 
-	void DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 scale = glm::vec3(1));
+	void DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 scale = glm::vec3(1), glm::vec3 RotationAxis = glm::vec3(0), float RotationAmount = 0);
+
+	glm::mat4 RotMatrix = glm::mat4(1);
+	glm::mat4 ScaleMatrix = glm::mat4(1);
 
 	glm::mat4 LocalMatrix = glm::mat4(1);
 
@@ -35,6 +40,9 @@ public:
 	std::string m_FragShader;
 	std::string LoadShader(const char *filePath);
 
+	Light* m_light;
+
 	Texture* m_textureFile;
+	Texture* m_textureNormal;
 };
 

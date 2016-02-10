@@ -46,6 +46,10 @@ public:
 
 	glm::vec3 m_Scale;
 
+	glm::vec3 m_RotAxis = glm::vec3(0);
+
+	float m_RotAmount = 0;
+
 	void Draw(Camera* camera);
 	void Update(float DeltaTime);
 

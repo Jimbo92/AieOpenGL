@@ -17,9 +17,9 @@
 #include <glm\gtc\quaternion.hpp>
 #include <glm\gtx\quaternion.hpp>
 
+#include <Light.h>
+
 class Camera;
-
-
 
 class GeometryApp : public BaseApplication
 {
@@ -54,6 +54,8 @@ private:
 	Model* LucyModel;
 	Model* BunnyModel;
 	Model* SwordModel;
+
+	Light* m_testLight;
 
 
 };

@@ -20,12 +20,8 @@ void main()
 	nextTextCoord = vTexCoord;
 	nextTextCoord.y = vTexCoord.y * -1;
 
-	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal * 2));
-
-	vec3 N = texture(normal, nextTextCoord).xyz * 2 - 1;
-
 	float d = 0;
-	d = max(0, dot(normalize(TBN * N), lightdirection));
+	d = max(0, dot(normalize(vNormal), lightdirection));
 
 	FragColor = texture(diffuse, nextTextCoord) * d;
 }

@@ -45,19 +45,26 @@ bool GeometryApp::startup()
 	m_camera = new Camera(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
-	//===================//Load OBJ models//==============================//
-	Shader* CoolShader = new Shader("./data/vshader.vert", "./data/fshader.frag");
-	Shader* NormalShader = new Shader("./data/vs_standardmodel.vert", "./data/fs_standardmodel.frag");
+	m_testLight = new Light();
 
+	//===================//Load OBJ models//==============================//
 	Texture* earthTexture = new Texture("./data/ruinedtank/ground_diff.jpg");
 
-	Shader* TextureShader = new Shader("./data/vs_texture.vert", "./data/fs_texture.frag", earthTexture);
+	Shader* CoolShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture.frag", earthTexture);
+	CoolShader->m_light = m_testLight;
+
+	Shader* NormalShader = new Shader("./data/vs_standardmodel.vert", "./data/fs_standardmodel.frag");
+
+	Shader* TextureShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", earthTexture);
+	TextureShader->m_light = m_testLight;
 
 	LucyModel = new Model("./data/Lucy.obj", CoolShader, glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
-	BunnyModel = new Model("./data/ruinedtank/tank.obj", TextureShader);
+	BunnyModel = new Model("./data/ruinedtank/tank.obj", CoolShader);
 
 	Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
-	Shader* SwordShader = new Shader("./data/vs_texture.vert", "./data/fs_texture.frag", SwordTexture);
+	Texture* SwordTexture_N = new Texture("./data/soulspear/soulspear_normal.tga");
+	Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm.frag", SwordTexture, SwordTexture_N);
+	SwordShader->m_light = m_testLight;
 	SwordModel = new Model("./data/soulspear/soulspear.obj", SwordShader, vec3(0, 20, 0));
 
 	
@@ -90,6 +97,13 @@ bool GeometryApp::update(float deltaTime)
 	// clear the gizmos out for this frame
 	Gizmos::clear();
 
+
+	m_testLight->m_lightDir = glm::vec3(sin(glfwGetTime() * 0.5f), 1, cos(glfwGetTime() * 0.5f));
+
+	SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
+	SwordModel->m_RotAmount = sin(glfwGetTime());
+
+	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
 
 	//generate the grid
 	generateGrid(64, 64);
