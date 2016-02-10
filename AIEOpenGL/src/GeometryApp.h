@@ -53,6 +53,7 @@ private:
 
 	Model* LucyModel;
 	Model* BunnyModel;
+	Model* SwordModel;
 
 
 };

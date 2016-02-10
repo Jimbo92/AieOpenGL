@@ -48,12 +48,19 @@ bool GeometryApp::startup()
 	//===================//Load OBJ models//==============================//
 	Shader* CoolShader = new Shader("./data/vshader.vert", "./data/fshader.frag");
 	Shader* NormalShader = new Shader("./data/vs_standardmodel.vert", "./data/fs_standardmodel.frag");
-	Texture* earthTexture = new Texture("./data/earth_diffuse.jpg");
+
+	Texture* earthTexture = new Texture("./data/ruinedtank/ground_diff.jpg");
 
 	Shader* TextureShader = new Shader("./data/vs_texture.vert", "./data/fs_texture.frag", earthTexture);
 
 	LucyModel = new Model("./data/Lucy.obj", CoolShader, glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
-	BunnyModel = new Model("./data/Bunny.obj", TextureShader, glm::vec3(0, -10, 0));
+	BunnyModel = new Model("./data/ruinedtank/tank.obj", TextureShader);
+
+	Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
+	Shader* SwordShader = new Shader("./data/vs_texture.vert", "./data/fs_texture.frag", SwordTexture);
+	SwordModel = new Model("./data/soulspear/soulspear.obj", SwordShader, vec3(0, 20, 0));
+
+	
 
 	return true;
 }
@@ -178,12 +185,13 @@ void GeometryApp::draw()
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	LucyModel->Draw(m_camera);
+	//LucyModel->Draw(m_camera);
 	BunnyModel->Draw(m_camera);
+	SwordModel->Draw(m_camera);
 
-	glBindVertexArray(m_VAO);
-	unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(m_VAO);
+	//unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;
+	//glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());
