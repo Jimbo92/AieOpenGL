@@ -32,7 +32,9 @@ bool BaseApplication::createWindow(const char* title, int width, int height) {
 	glClearColor(.25, .25, .25, 1);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	

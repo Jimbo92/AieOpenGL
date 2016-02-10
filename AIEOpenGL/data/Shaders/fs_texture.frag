@@ -14,6 +14,8 @@ uniform vec3 lightdirection;
 
 vec2 nextTextCoord;
 
+float alpha = 1.0f;
+
 void main() 
 { 
 	//flip y axis on texture coords to correct rotation
@@ -23,5 +25,8 @@ void main()
 	float d = 0;
 	d = max(0, dot(normalize(vNormal), lightdirection));
 
-	FragColor = texture(diffuse, nextTextCoord) * d;
+	vec4 TextureColor = texture(diffuse, nextTextCoord);
+	TextureColor.a *= alpha;
+	TextureColor.rgb *= d;
+	FragColor = TextureColor;
 }

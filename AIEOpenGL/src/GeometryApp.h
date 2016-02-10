@@ -57,6 +57,8 @@ private:
 
 	Light* m_testLight;
 
+	Model* WaterModelTest;
+
 
 };
 

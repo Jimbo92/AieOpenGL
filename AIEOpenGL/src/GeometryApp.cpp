@@ -48,26 +48,53 @@ bool GeometryApp::startup()
 	m_testLight = new Light();
 
 	//===================//Load OBJ models//==============================//
+	
 	Texture* earthTexture = new Texture("./data/ruinedtank/ground_diff.jpg");
-
 	Shader* CoolShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture.frag", earthTexture);
 	CoolShader->m_light = m_testLight;
 
 	Shader* NormalShader = new Shader("./data/vs_standardmodel.vert", "./data/fs_standardmodel.frag");
 
-	Shader* TextureShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", earthTexture);
-	TextureShader->m_light = m_testLight;
+	Texture* groundText = new Texture("./data/ruinedtank/ground_diff.jpg");
+	Shader* groundShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", groundText);
+	groundShader->m_light = m_testLight;
 
-	LucyModel = new Model("./data/Lucy.obj", CoolShader, glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
-	BunnyModel = new Model("./data/ruinedtank/tank.obj", CoolShader);
+	Texture* engineText = new Texture("./data/ruinedtank/left_engine_diff.jpg");
+	Shader* engineShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", engineText);
+	engineShader->m_light = m_testLight;
+
+	Texture* turretText = new Texture("./data/ruinedtank/turret_diff.jpg");
+	Shader* turretShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", turretText);
+	turretShader->m_light = m_testLight;
+
+	BunnyModel = new Model("./data/ruinedtank/tank.obj");
+	BunnyModel->ModelShaders.push_back(groundShader);
+	BunnyModel->ModelShaders.push_back(engineShader);
+	BunnyModel->ModelShaders.push_back(groundShader);
+	BunnyModel->ModelShaders.push_back(groundShader);
+	BunnyModel->ModelShaders.push_back(groundShader);
+	BunnyModel->ModelShaders.push_back(groundShader);
+	BunnyModel->ModelShaders.push_back(engineShader);
+	BunnyModel->ModelShaders.push_back(engineShader);
+	BunnyModel->ModelShaders.push_back(turretShader);
+	BunnyModel->ModelShaders.push_back(turretShader);
+
+	LucyModel = new Model("./data/Lucy.obj", glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
+
 
 	Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
 	Texture* SwordTexture_N = new Texture("./data/soulspear/soulspear_normal.tga");
 	Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm.frag", SwordTexture, SwordTexture_N);
 	SwordShader->m_light = m_testLight;
-	SwordModel = new Model("./data/soulspear/soulspear.obj", SwordShader, vec3(0, 20, 0));
-
+	SwordModel = new Model("./data/soulspear/soulspear.obj", vec3(0, 20, 0));
+	SwordModel->ModelShaders.push_back(SwordShader);
 	
+	Texture* WaterTexture = new Texture("./data/water/water_diffuse.jpg");
+	Texture* WaterTexture_Norm = new Texture("./data/water/water_normal.jpg");
+	Shader* WaterShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture_wave.frag", WaterTexture, WaterTexture_Norm);
+	WaterShader->m_light = m_testLight;
+	WaterModelTest = new Model("./data/water/waterplane.obj", vec3(5, 0.3f, -3));
+	WaterModelTest->ModelShaders.push_back(WaterShader);
 
 	return true;
 }
@@ -102,11 +129,11 @@ bool GeometryApp::update(float deltaTime)
 
 	SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
 	SwordModel->m_RotAmount = sin(glfwGetTime());
-
+	//
 	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
 
 	//generate the grid
-	generateGrid(64, 64);
+	//generateGrid(64, 64);
 
 	/*
 	// ...for now let's add a grid to the gizmos
@@ -202,6 +229,9 @@ void GeometryApp::draw()
 	//LucyModel->Draw(m_camera);
 	BunnyModel->Draw(m_camera);
 	SwordModel->Draw(m_camera);
+
+	WaterModelTest->Draw(m_camera);
+
 
 	//glBindVertexArray(m_VAO);
 	//unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;

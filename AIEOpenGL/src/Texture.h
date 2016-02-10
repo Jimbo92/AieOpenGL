@@ -9,7 +9,6 @@
 class Texture
 {
 public:
-	Texture() {}
 	Texture(const char* FilePath);
 
 	unsigned int m_texture;

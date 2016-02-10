@@ -51,6 +51,7 @@
     <None Include="data\fshader.frag" />
     <None Include="data\Shaders\fs_texture.frag" />
     <None Include="data\Shaders\fs_texture_norm.frag" />
+    <None Include="data\Shaders\fs_texture_wave.frag" />
     <None Include="data\Shaders\vs_texture.vert" />
     <None Include="data\Shaders\vs_texture_wave.vert" />
     <None Include="data\vshader.vert" />

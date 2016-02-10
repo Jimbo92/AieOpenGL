@@ -30,8 +30,7 @@ struct OpenGLInfo
 class Model
 {
 public:
-	Model() {}
-	Model(const char* Filepath, Shader* shader, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
+	Model(const char* Filepath, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
 	~Model();
 
 	void createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes);
@@ -54,8 +53,11 @@ public:
 	void Update(float DeltaTime);
 
 
+	std::vector<Shader*> ModelShaders;
+
+
 private:
-	Shader* ModelShader;
+
 
 
 };

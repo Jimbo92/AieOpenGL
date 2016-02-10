@@ -21,10 +21,10 @@ void main()
 	vTexCoord = TexCoord;
 
 	vec4 P = Position;
-	P.y += sin((time + Position.x) * 0.5f) * 0.3f;
-	P.y += cos((time + Position.x) * 0.5f) * 0.3f;
-	P.y += sin((time + Position.z) * 0.5f) * 0.3f;
-	P.y += cos((time + Position.z) * 0.5f) * 0.3f;
+	P.y += sin((time + Position.x) * 2.0f) * 0.01f;
+	P.y += cos((time + Position.x) * 2.0f) * 0.01f;
+	P.y += sin((time + Position.z) * 2.0f) * 0.01f;
+	P.y += cos((time + Position.z) * 2.0f) * 0.01f;
 
 	gl_Position = ProjectionView * P;
 }

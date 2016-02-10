@@ -2,7 +2,7 @@
 
 
 
-Model::Model(const char* FilePath, Shader* shader, glm::vec3 InitialLocation, glm::vec3 InitialScale)
+Model::Model(const char* FilePath, glm::vec3 InitialLocation, glm::vec3 InitialScale)
 {
 	bool successful = tinyobj::LoadObj(shapes, materials, err, FilePath);
 	if (!successful)
@@ -11,17 +11,7 @@ Model::Model(const char* FilePath, Shader* shader, glm::vec3 InitialLocation, gl
 	}
 	assert(successful);
 
-	//for (int i = 0; i < shapes.size(); i++)
-	//{
-	//	for (int o = 0; o < shapes[i].mesh.positions.size(); o++)
-	//	{
-	//		shapes[i].mesh.positions[o] += 10;
-	//	}
-	//}
-
 	createOpenGLBuffers(shapes);
-
-	ModelShader = shader;
 
 	m_Location = InitialLocation;
 	m_Scale = InitialScale;
@@ -30,6 +20,8 @@ Model::Model(const char* FilePath, Shader* shader, glm::vec3 InitialLocation, gl
 void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
 {
 	m_gl_info.resize(shapes.size());
+
+	//ModelShaders.resize(shapes.size());
 
 	for (unsigned int mesh_index = 0; mesh_index < shapes.size(); ++mesh_index)
 	{
@@ -49,7 +41,6 @@ void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
 		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.positions.begin(), shapes[mesh_index].mesh.positions.end());
 		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.texcoords.begin(), shapes[mesh_index].mesh.texcoords.end());
 		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.normals.begin(), shapes[mesh_index].mesh.normals.end());
-
 
 		m_gl_info[mesh_index].m_index_count = shapes[mesh_index].mesh.indices.size();
 
@@ -72,10 +63,6 @@ void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
 		offset += (sizeof(float) * shapes[mesh_index].mesh.texcoords.size());
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_TRUE, 0, (void*)offset);
 
-		//glEnableVertexAttribArray(3); //Tangent
-		//offset += (sizeof(float) * shapes[mesh_index].mesh.normals.size());
-		//glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
-
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -90,13 +77,15 @@ void Model::Update(float DeltaTime)
 
 void Model::Draw(Camera* camera)
 {
-	if (ModelShader != nullptr)
-	{
-		ModelShader->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
-	}
+	//if (ModelShader != nullptr)
+	//{
+	//	ModelShader->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
+	//}
 
 	for (unsigned int i = 0; i < m_gl_info.size(); ++i)
 	{
+		ModelShaders[i]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
+
 		glBindVertexArray(m_gl_info[i].m_VAO);
 		glDrawElements(GL_TRIANGLES, m_gl_info[i].m_index_count, GL_UNSIGNED_INT, 0);
 	}
