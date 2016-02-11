@@ -9,11 +9,13 @@ out vec3 vNormal;
 out vec2 vTexCoord;
 out vec3 vTangent;
 out vec3 vBiTangent;
+out vec4 vPosition;
 
 uniform mat4 ProjectionView;
 
 void main() 
 {
+	vPosition = Position;
 	vNormal = Normal.xyz;
 	vTangent = Tangent.xyz;
 	vBiTangent = cross(vNormal, vTangent);

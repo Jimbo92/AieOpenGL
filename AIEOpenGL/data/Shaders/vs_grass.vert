@@ -16,17 +16,17 @@ uniform float time;
 
 void main() 
 {
+	vPosition = Position;
 	vNormal = Normal.xyz;
 	vTangent = Tangent.xyz;
 	vBiTangent = cross(vNormal, vTangent);
 	vTexCoord = TexCoord;
-	vPosition = Position;
 
 	vec4 P = Position;
-	P.y += sin((time + Position.x) * 2.0f) * 0.02f;
-	P.y += cos((time + Position.x) * 2.0f) * 0.02f;
-	P.y += sin((time + Position.z) * 2.0f) * 0.02f;
-	P.y += cos((time + Position.z) * 2.0f) * 0.02f;
+	P.x += sin((time * Position.y) * 5.0f) * 0.01f;
+	P.x += cos((time * Position.y) * 5.0f) * 0.01f;
+	P.z += sin((time * Position.y) * 5.0f) * 0.01f;
+	P.z += cos((time * Position.y) * 5.0f) * 0.01f;
 
 	gl_Position = ProjectionView * P;
 }

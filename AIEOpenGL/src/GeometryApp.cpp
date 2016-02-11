@@ -84,17 +84,57 @@ bool GeometryApp::startup()
 
 	Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
 	Texture* SwordTexture_N = new Texture("./data/soulspear/soulspear_normal.tga");
-	Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm.frag", SwordTexture, SwordTexture_N);
+	Texture* SwordTexture_Spec = new Texture("./data/soulspear/soulspear_specular.tga");
+	Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag", SwordTexture, SwordTexture_N, SwordTexture_Spec);
 	SwordShader->m_light = m_testLight;
+	SwordShader->m_specpow = 2.f;
 	SwordModel = new Model("./data/soulspear/soulspear.obj", vec3(0, 20, 0));
 	SwordModel->ModelShaders.push_back(SwordShader);
 	
+	//water
 	Texture* WaterTexture = new Texture("./data/water/water_diffuse.jpg");
 	Texture* WaterTexture_Norm = new Texture("./data/water/water_normal.jpg");
-	Shader* WaterShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture_wave.frag", WaterTexture, WaterTexture_Norm);
+	WaterShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture_wave.frag", WaterTexture, WaterTexture_Norm);
 	WaterShader->m_light = m_testLight;
+	WaterShader->m_alpha = 0.5f;
+	WaterShader->m_specpow = 10.0f;
 	WaterModelTest = new Model("./data/water/waterplane.obj", vec3(5, 0.3f, -3));
 	WaterModelTest->ModelShaders.push_back(WaterShader);
+
+	//grass
+	Texture* GrassTexture = new Texture("./data/grass/grass_diff.tga");
+	Texture* GrassTexture_N = new Texture("./data/grass/grass_norm.tga");
+	Texture* GrassTexture_Spec = new Texture("./data/grass/grass_spec.tga");
+	Shader* GrassShader = new Shader("./data/Shaders/vs_grass.vert", "./data/Shaders/fs_texture_norm_spec.frag", GrassTexture, GrassTexture_N, GrassTexture_Spec);
+	GrassShader->m_light = m_testLight;
+	GrassShader->m_specpow = 1.1f;
+	mdl_GrassChunk1 = new Model("./data/grass/Grass_01.obj", vec3(-5.f, 6.6f, 18.f));
+	mdl_GrassChunk1->ModelShaders.push_back(GrassShader);
+	mdl_GrassChunk2 = new Model("./data/grass/Grass_02.obj", vec3(-5.f, 6.5f, 18.f), glm::vec3(0.5f, 0.5f, 0.5f));
+	mdl_GrassChunk2->ModelShaders.push_back(GrassShader);
+	mdl_GrassChunk3 = new Model("./data/grass/Grass_03.obj", vec3(-5.f, 6.6f, 18.f));
+	mdl_GrassChunk3->ModelShaders.push_back(GrassShader);
+
+	//palmTree
+	Texture* PalmTreeTrunkTexture = new Texture("./data/palmtree/ENV_MP_Iraq_palm_tree_01_D.tga");
+	Texture* PalmTreeTrunkTexture_N = new Texture("./data/palmtree/ENV_MP_Iraq_palm_tree_01_N.tga");
+	Shader* PalmTreeTrunkShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm.frag", PalmTreeTrunkTexture, PalmTreeTrunkTexture_N);
+	PalmTreeTrunkShader->m_light = m_testLight;
+
+	Texture* PalmTreeBranchTexture = new Texture("./data/palmtree/ENV_MP_Iraq_PlantsSansTrans_D.tga");
+	Texture* PalmTreeBranchTexture_Spec = new Texture("./data/palmtree/ENV_MP_Iraq_PlantsSansTrans_S.tga");
+	Shader* PalmTreeBranchShader = new Shader("./data/Shaders/vs_branch.vert", "./data/Shaders/fs_texture_norm_spec.frag", PalmTreeBranchTexture, nullptr, PalmTreeBranchTexture_Spec);
+	PalmTreeBranchShader->m_light = m_testLight;
+	PalmTreeBranchShader->m_specpow = 1.f;
+
+	mdl_PalmTree = new Model("./data/palmtree/Palm_Tree.obj", vec3(-5.f, 6.6f, 18.f), glm::vec3(0.1f, 0.1f, 0.1f));
+	mdl_PalmTree->m_RotAxis = glm::vec3(1, 0, 0);
+	mdl_PalmTree->m_RotAmount = glm::radians(-90.f);
+	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
+	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
+	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
+	mdl_PalmTree->ModelShaders.push_back(PalmTreeTrunkShader);
+
 
 	return true;
 }
@@ -231,6 +271,12 @@ void GeometryApp::draw()
 	SwordModel->Draw(m_camera);
 
 	WaterModelTest->Draw(m_camera);
+
+	//mdl_GrassChunk1->Draw(m_camera);
+	mdl_GrassChunk2->Draw(m_camera);
+	//mdl_GrassChunk3->Draw(m_camera);
+
+	mdl_PalmTree->Draw(m_camera);
 
 
 	//glBindVertexArray(m_VAO);

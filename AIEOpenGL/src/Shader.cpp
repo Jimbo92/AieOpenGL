@@ -2,10 +2,11 @@
 
 using namespace std;
 
-Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile, Texture* NormalMap)
+Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile, Texture* NormalMap, Texture* SpecMap)
 {
 	m_textureFile = TextureFile;
 	m_textureNormal = NormalMap;
+	m_textureSpecmap = SpecMap;
 
 	m_VertShader = LoadShader(VertexShaderPath);
 	m_FragShader = LoadShader(FragmentShaderPath);
@@ -87,8 +88,27 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	projectionViewUniform = glGetUniformLocation(m_programID, "normal");
 	glUniform1i(projectionViewUniform, 1);
 
+	//Set spec map
+	if (m_textureSpecmap != nullptr)
+	{
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_textureSpecmap->m_texture);
+	}
+	projectionViewUniform = glGetUniformLocation(m_programID, "specmap");
+	glUniform1i(projectionViewUniform, 2);
+
 	unsigned int timeUniform = glGetUniformLocation(m_programID, "time");
 	glUniform1f(timeUniform, glfwGetTime());
+
+	unsigned int alphaUniform = glGetUniformLocation(m_programID, "alpha");
+	glUniform1f(alphaUniform, m_alpha);
+
+	unsigned int specpowUniform = glGetUniformLocation(m_programID, "specpow");
+	glUniform1f(specpowUniform, m_specpow);
+
+	glm::vec4 camPos = CurrentCamera->getTransform()[3];
+	unsigned int cameraposUniform = glGetUniformLocation(m_programID, "camerapos");
+	glUniform3f(cameraposUniform, camPos.x, camPos.y, camPos.z);
 
 	unsigned int lightdirUniform = glGetUniformLocation(m_programID, "lightdirection");
 	glUniform3f(lightdirUniform, m_light->m_lightDir.x, m_light->m_lightDir.y, m_light->m_lightDir.z);

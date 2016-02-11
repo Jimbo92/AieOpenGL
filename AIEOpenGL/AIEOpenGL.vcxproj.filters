@@ -118,5 +118,20 @@
     <None Include="data\Shaders\fs_texture_wave.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="data\Shaders\fs_texture_norm_spec.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\fs_grass.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\vs_grass.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\fs_branch.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\vs_branch.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

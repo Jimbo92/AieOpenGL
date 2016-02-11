@@ -59,6 +59,14 @@ private:
 
 	Model* WaterModelTest;
 
+	Model* mdl_GrassChunk1;
+	Model* mdl_GrassChunk2;
+	Model* mdl_GrassChunk3;
+
+	Model* mdl_PalmTree;
+
+	Shader* WaterShader;
+
 
 };
 

@@ -25,7 +25,7 @@ class Shader
 public:
 
 	Shader() {}
-	Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile = nullptr, Texture* NormalMap = nullptr);
+	Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile = nullptr, Texture* NormalMap = nullptr, Texture* SpecMap = nullptr);
 	~Shader();
 
 	void DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 scale = glm::vec3(1), glm::vec3 RotationAxis = glm::vec3(0), float RotationAmount = 0);
@@ -44,5 +44,9 @@ public:
 
 	Texture* m_textureFile;
 	Texture* m_textureNormal;
+	Texture* m_textureSpecmap;
+
+	float m_alpha = 1.f;
+	float m_specpow = 0.f;
 };
 

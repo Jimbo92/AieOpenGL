@@ -11,6 +11,7 @@ out vec4 FragColor;
 
 uniform sampler2D diffuse; 
 uniform sampler2D normal;
+uniform sampler2D specmap;
 uniform vec3 lightdirection;
 uniform float time;
 uniform vec3 camerapos;
@@ -18,26 +19,21 @@ uniform float alpha;
 uniform float specpow;
 
 vec2 nextTextCoord;
-vec2 nextTextCoord2;
 
 void main() 
 { 
 	//flip y axis on texture coords to correct rotation
-	nextTextCoord.x = vTexCoord.x + sin(time * 0.01f);
-	nextTextCoord.y = vTexCoord.y + cos(time * 0.01f) * -1;
-
-	nextTextCoord2.x = vTexCoord.x + sin(time * 0.01f) * -1;
-	nextTextCoord2.y = vTexCoord.y + cos(time * 0.01f);
+	nextTextCoord = vTexCoord;
+	nextTextCoord.y = vTexCoord.y * -1;
 
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
-	vec4 TextureColor2 = texture(diffuse, -nextTextCoord2);
-
+	vec3 SM = texture(specmap, nextTextCoord).xyz;
 	vec3 N = texture(normal, nextTextCoord).xyz * 2 - 1;
 
 	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal * 2));
 
 	vec3 E = normalize(camerapos - vPosition.xyz);
-	vec3 R = reflect(-lightdirection, N.xyz);
+	vec3 R = reflect(-lightdirection, (SM.xyz + vNormal.xyz) * 0.5f);
 
 	float s = max(0, dot(E, R));
 	s = pow(s, specpow); //specpow
@@ -45,12 +41,7 @@ void main()
 	float d = 0;
 	d = max(0, dot(normalize(TBN * N), lightdirection));
 
-
-
-	vec4 FinalColor;
-	FinalColor = (TextureColor2 * TextureColor);
-	FinalColor.rgb = FinalColor.rgb * d + FinalColor.rgb * s;
-	FinalColor.a *= alpha;
-
-	FragColor = FinalColor;
+	TextureColor.a *= alpha;
+	TextureColor.rgb = (TextureColor.rgb * d) + (TextureColor.rgb * s);
+	FragColor = TextureColor;
 }
