@@ -11,6 +11,7 @@ out vec4 FragColor;
 uniform sampler2D diffuse; 
 uniform sampler2D normal;
 uniform vec3 lightdirection;
+uniform vec3 ambient = vec3(0.25, 0.25, 0.25);
 
 vec2 nextTextCoord;
 
@@ -22,11 +23,16 @@ void main()
 	nextTextCoord = vTexCoord;
 	nextTextCoord.y = vTexCoord.y * -1;
 
+
+
 	float d = 0;
 	d = max(0, dot(normalize(vNormal), lightdirection));
 
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
 	TextureColor.a *= alpha;
 	TextureColor.rgb *= d;
-	FragColor = TextureColor;
+
+	vec3 amb = ambient * TextureColor;
+
+	FragColor = amb + TextureColor;
 }

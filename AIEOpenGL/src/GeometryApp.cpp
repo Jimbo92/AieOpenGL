@@ -67,7 +67,7 @@ bool GeometryApp::startup()
 	Shader* turretShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", turretText);
 	turretShader->m_light = m_testLight;
 
-	BunnyModel = new Model("./data/ruinedtank/tank.obj");
+	BunnyModel = new Model("./data/ruinedtank/tank");
 	BunnyModel->ModelShaders.push_back(groundShader);
 	BunnyModel->ModelShaders.push_back(engineShader);
 	BunnyModel->ModelShaders.push_back(groundShader);
@@ -79,7 +79,7 @@ bool GeometryApp::startup()
 	BunnyModel->ModelShaders.push_back(turretShader);
 	BunnyModel->ModelShaders.push_back(turretShader);
 
-	LucyModel = new Model("./data/Lucy.obj", glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
+	LucyModel = new Model("./data/Lucy", glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
 
 
 	Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
@@ -88,7 +88,7 @@ bool GeometryApp::startup()
 	Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag", SwordTexture, SwordTexture_N, SwordTexture_Spec);
 	SwordShader->m_light = m_testLight;
 	SwordShader->m_specpow = 2.f;
-	SwordModel = new Model("./data/soulspear/soulspear.obj", vec3(0, 20, 0));
+	SwordModel = new Model("./data/soulspear/soulspear", vec3(0, 20, 0));
 	SwordModel->ModelShaders.push_back(SwordShader);
 	
 	//water
@@ -98,7 +98,7 @@ bool GeometryApp::startup()
 	WaterShader->m_light = m_testLight;
 	WaterShader->m_alpha = 0.5f;
 	WaterShader->m_specpow = 10.0f;
-	WaterModelTest = new Model("./data/water/waterplane.obj", vec3(5, 0.3f, -3));
+	WaterModelTest = new Model("./data/water/waterplane", vec3(5, 0.3f, -3));
 	WaterModelTest->ModelShaders.push_back(WaterShader);
 
 	//grass
@@ -108,11 +108,11 @@ bool GeometryApp::startup()
 	Shader* GrassShader = new Shader("./data/Shaders/vs_grass.vert", "./data/Shaders/fs_texture_norm_spec.frag", GrassTexture, GrassTexture_N, GrassTexture_Spec);
 	GrassShader->m_light = m_testLight;
 	GrassShader->m_specpow = 1.1f;
-	mdl_GrassChunk1 = new Model("./data/grass/Grass_01.obj", vec3(-5.f, 6.6f, 18.f));
+	mdl_GrassChunk1 = new Model("./data/grass/Grass_01", vec3(-5.f, 6.6f, 18.f));
 	mdl_GrassChunk1->ModelShaders.push_back(GrassShader);
-	mdl_GrassChunk2 = new Model("./data/grass/Grass_02.obj", vec3(-5.f, 6.5f, 18.f), glm::vec3(0.5f, 0.5f, 0.5f));
+	mdl_GrassChunk2 = new Model("./data/grass/Grass_02", vec3(-5.f, 6.5f, 18.f), glm::vec3(0.5f, 0.5f, 0.5f));
 	mdl_GrassChunk2->ModelShaders.push_back(GrassShader);
-	mdl_GrassChunk3 = new Model("./data/grass/Grass_03.obj", vec3(-5.f, 6.6f, 18.f));
+	mdl_GrassChunk3 = new Model("./data/grass/Grass_03", vec3(-5.f, 6.6f, 18.f));
 	mdl_GrassChunk3->ModelShaders.push_back(GrassShader);
 
 	//palmTree
@@ -127,7 +127,7 @@ bool GeometryApp::startup()
 	PalmTreeBranchShader->m_light = m_testLight;
 	PalmTreeBranchShader->m_specpow = 1.f;
 
-	mdl_PalmTree = new Model("./data/palmtree/Palm_Tree.obj", vec3(-5.f, 6.6f, 18.f), glm::vec3(0.1f, 0.1f, 0.1f));
+	mdl_PalmTree = new Model("./data/palmtree/Palm_Tree", vec3(-5.f, 6.6f, 18.f), glm::vec3(0.1f, 0.1f, 0.1f));
 	mdl_PalmTree->m_RotAxis = glm::vec3(1, 0, 0);
 	mdl_PalmTree->m_RotAmount = glm::radians(-90.f);
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);

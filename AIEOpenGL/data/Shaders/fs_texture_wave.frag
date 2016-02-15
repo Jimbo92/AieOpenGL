@@ -1,3 +1,4 @@
+
 #version 410
 
 in vec4 vColor;
@@ -16,6 +17,7 @@ uniform float time;
 uniform vec3 camerapos;
 uniform float alpha;
 uniform float specpow;
+uniform vec3 ambient = vec3(0.25f, 0.25f, 0.25f);
 
 vec2 nextTextCoord;
 vec2 nextTextCoord2;
@@ -32,9 +34,11 @@ void main()
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
 	vec4 TextureColor2 = texture(diffuse, -nextTextCoord2);
 
+	
+
 	vec3 N = texture(normal, nextTextCoord).xyz * 2 - 1;
 
-	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal * 2));
+	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal));
 
 	vec3 E = normalize(camerapos - vPosition.xyz);
 	vec3 R = reflect(-lightdirection, N.xyz);
@@ -51,6 +55,8 @@ void main()
 	FinalColor = (TextureColor2 * TextureColor);
 	FinalColor.rgb = FinalColor.rgb * d + FinalColor.rgb * s;
 	FinalColor.a *= alpha;
+
+	vec4 amb = vec4(ambient * TextureColor.xyz, 0);
 
 	FragColor = FinalColor;
 }

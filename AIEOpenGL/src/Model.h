@@ -55,6 +55,10 @@ public:
 
 	std::vector<Shader*> ModelShaders;
 
+	std::map<std::string, int> m_TextureMap;
+
+	std::vector<unsigned int> m_Textures;
+
 
 private:
 

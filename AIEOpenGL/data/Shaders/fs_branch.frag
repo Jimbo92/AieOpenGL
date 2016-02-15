@@ -11,6 +11,7 @@ out vec4 FragColor;
 uniform sampler2D diffuse; 
 uniform sampler2D normal;
 uniform vec3 lightdirection;
+uniform vec3 ambient = vec3(0.25f, 0.25f, 0.25f);
 
 vec2 nextTextCoord;
 

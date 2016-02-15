@@ -4,12 +4,33 @@
 
 Model::Model(const char* FilePath, glm::vec3 InitialLocation, glm::vec3 InitialScale)
 {
-	bool successful = tinyobj::LoadObj(shapes, materials, err, FilePath);
+	std::string ObjPath = FilePath;
+	ObjPath.append(".obj");
+
+	bool successful = tinyobj::LoadObj(shapes, materials, err, ObjPath.c_str());
 	if (!successful)
 	{
 		std::cout << "Error Loading Model" << FilePath << std::endl;
 	}
 	assert(successful);
+
+	std::ifstream texturestream;
+
+	//load material ID's
+	std::string MtlPath = FilePath;
+	MtlPath.append(".mtl");
+	texturestream.open(MtlPath, std::ios::in);
+	tinyobj::LoadMtl(m_TextureMap, materials, texturestream);
+
+	for each (tinyobj::material_t mat in materials)
+	{
+		auto itter = m_TextureMap.find(mat.name);
+		if (itter != m_TextureMap.end())
+		{
+			Texture* tempTexture = new Texture(mat.diffuse_texname.c_str());
+			m_Textures.push_back(tempTexture->m_texture);
+		}	
+	}
 
 	createOpenGLBuffers(shapes);
 

@@ -12,6 +12,7 @@ out vec3 vBiTangent;
 out vec4 vPosition;
 
 uniform mat4 ProjectionView;
+uniform vec3 lightposition;
 
 void main() 
 {

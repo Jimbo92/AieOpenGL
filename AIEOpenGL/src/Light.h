@@ -15,5 +15,7 @@ public:
 	~Light();
 
 	glm::vec3 m_lightDir = glm::vec3(0, 1, 0);
+
+	glm::vec3 m_lightPos = glm::vec3(0);
 };
 
