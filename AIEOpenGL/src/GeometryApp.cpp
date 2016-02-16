@@ -45,10 +45,11 @@ bool GeometryApp::startup()
 	m_camera = new Camera(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
-	m_testLight = new Light();
+	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 100.f);
 
 	//===================//Load OBJ models//==============================//
 	
+	/*
 	Texture* earthTexture = new Texture("./data/ruinedtank/ground_diff.jpg");
 	Shader* CoolShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture.frag", earthTexture);
 	CoolShader->m_light = m_testLight;
@@ -57,14 +58,17 @@ bool GeometryApp::startup()
 
 	Texture* groundText = new Texture("./data/ruinedtank/ground_diff.jpg");
 	Shader* groundShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", groundText);
+	groundShader->m_specpow = 1.1f;
 	groundShader->m_light = m_testLight;
 
 	Texture* engineText = new Texture("./data/ruinedtank/left_engine_diff.jpg");
-	Shader* engineShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", engineText);
+	Texture* engineText_N = new Texture("./data/ruinedtank/left_engine_norm.jpg");
+	Shader* engineShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm.frag", engineText, engineText_N);
 	engineShader->m_light = m_testLight;
 
 	Texture* turretText = new Texture("./data/ruinedtank/turret_diff.jpg");
-	Shader* turretShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture.frag", turretText);
+	Texture* turretText_N = new Texture("./data/ruinedtank/turret_norm.jpg");
+	Shader* turretShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm.frag", turretText, turretText_N);
 	turretShader->m_light = m_testLight;
 
 	BunnyModel = new Model("./data/ruinedtank/tank");
@@ -79,7 +83,7 @@ bool GeometryApp::startup()
 	BunnyModel->ModelShaders.push_back(turretShader);
 	BunnyModel->ModelShaders.push_back(turretShader);
 
-	LucyModel = new Model("./data/Lucy", glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
+	LucyModel = new Model("./data/Lucy", 0, glm::vec3(10,0,0), glm::vec3(0.1,0.1,0.1));
 
 
 	Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
@@ -87,8 +91,8 @@ bool GeometryApp::startup()
 	Texture* SwordTexture_Spec = new Texture("./data/soulspear/soulspear_specular.tga");
 	Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag", SwordTexture, SwordTexture_N, SwordTexture_Spec);
 	SwordShader->m_light = m_testLight;
-	SwordShader->m_specpow = 2.f;
-	SwordModel = new Model("./data/soulspear/soulspear", vec3(0, 20, 0));
+	SwordShader->m_specpow = 1.2f;
+	SwordModel = new Model("./data/soulspear/soulspear", 0, vec3(0, 20, 0));
 	SwordModel->ModelShaders.push_back(SwordShader);
 	
 	//water
@@ -98,7 +102,7 @@ bool GeometryApp::startup()
 	WaterShader->m_light = m_testLight;
 	WaterShader->m_alpha = 0.5f;
 	WaterShader->m_specpow = 10.0f;
-	WaterModelTest = new Model("./data/water/waterplane", vec3(5, 0.3f, -3));
+	WaterModelTest = new Model("./data/water/waterplane", 0, vec3(5, 0.3f, -3));
 	WaterModelTest->ModelShaders.push_back(WaterShader);
 
 	//grass
@@ -108,11 +112,11 @@ bool GeometryApp::startup()
 	Shader* GrassShader = new Shader("./data/Shaders/vs_grass.vert", "./data/Shaders/fs_texture_norm_spec.frag", GrassTexture, GrassTexture_N, GrassTexture_Spec);
 	GrassShader->m_light = m_testLight;
 	GrassShader->m_specpow = 1.1f;
-	mdl_GrassChunk1 = new Model("./data/grass/Grass_01", vec3(-5.f, 6.6f, 18.f));
+	mdl_GrassChunk1 = new Model("./data/grass/Grass_01", 0, vec3(-5.f, 6.6f, 18.f));
 	mdl_GrassChunk1->ModelShaders.push_back(GrassShader);
-	mdl_GrassChunk2 = new Model("./data/grass/Grass_02", vec3(-5.f, 6.5f, 18.f), glm::vec3(0.5f, 0.5f, 0.5f));
+	mdl_GrassChunk2 = new Model("./data/grass/Grass_02", 0, vec3(-5.f, 6.5f, 18.f), glm::vec3(0.5f, 0.5f, 0.5f));
 	mdl_GrassChunk2->ModelShaders.push_back(GrassShader);
-	mdl_GrassChunk3 = new Model("./data/grass/Grass_03", vec3(-5.f, 6.6f, 18.f));
+	mdl_GrassChunk3 = new Model("./data/grass/Grass_03", 0, vec3(-5.f, 6.6f, 18.f));
 	mdl_GrassChunk3->ModelShaders.push_back(GrassShader);
 
 	//palmTree
@@ -127,13 +131,19 @@ bool GeometryApp::startup()
 	PalmTreeBranchShader->m_light = m_testLight;
 	PalmTreeBranchShader->m_specpow = 1.f;
 
-	mdl_PalmTree = new Model("./data/palmtree/Palm_Tree", vec3(-5.f, 6.6f, 18.f), glm::vec3(0.1f, 0.1f, 0.1f));
+	mdl_PalmTree = new Model("./data/palmtree/Palm_Tree", 0, vec3(-5.f, 6.6f, 18.f), glm::vec3(0.1f, 0.1f, 0.1f));
 	mdl_PalmTree->m_RotAxis = glm::vec3(1, 0, 0);
 	mdl_PalmTree->m_RotAmount = glm::radians(-90.f);
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeTrunkShader);
+	*/
+
+	Shader* NormalShader = new Shader("./data/vs_texture.vert", "./data/fs_texture.frag");
+	NormalShader->m_light = m_testLight;
+	mdl_Sponza = new Model("./data/soulspear/soulspear.fbx", 1);
+	mdl_Sponza->ModelShaders.push_back(NormalShader);
 
 
 	return true;
@@ -146,6 +156,8 @@ void GeometryApp::shutdown()
 	// delete our camera and cleanup gizmos
 	delete m_camera;
 	Gizmos::destroy();
+
+	mdl_Sponza->CleanUpFBX(mdl_Sponza->m_FBXModel);
 
 	// destroy our window properly
 	destroyWindow();
@@ -165,17 +177,17 @@ bool GeometryApp::update(float deltaTime)
 	Gizmos::clear();
 
 
-	m_testLight->m_lightDir = glm::vec3(sin(glfwGetTime() * 0.5f), 1, cos(glfwGetTime() * 0.5f));
+	m_testLight->m_lightPos = glm::vec3(sin(glfwGetTime()) * 25.f, cos(glfwGetTime()) * 25.f, 0);
 
-	SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
-	SwordModel->m_RotAmount = sin(glfwGetTime());
+	//SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
+	//SwordModel->m_RotAmount = sin(glfwGetTime());
 	//
-	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
+	//SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
 
 	//generate the grid
 	//generateGrid(64, 64);
 
-	/*
+	
 	// ...for now let's add a grid to the gizmos
 	for (int i = 0; i < 21; ++i) 
 	{
@@ -185,7 +197,7 @@ bool GeometryApp::update(float deltaTime)
 		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
 			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
 	}
-	*/
+	
 
 
 	return true;
@@ -267,16 +279,18 @@ void GeometryApp::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//LucyModel->Draw(m_camera);
-	BunnyModel->Draw(m_camera);
-	SwordModel->Draw(m_camera);
+	//BunnyModel->Draw(m_camera);
+	//SwordModel->Draw(m_camera);
 
-	WaterModelTest->Draw(m_camera);
+	//WaterModelTest->Draw(m_camera);
 
 	//mdl_GrassChunk1->Draw(m_camera);
-	mdl_GrassChunk2->Draw(m_camera);
+	//mdl_GrassChunk2->Draw(m_camera);
 	//mdl_GrassChunk3->Draw(m_camera);
 
-	mdl_PalmTree->Draw(m_camera);
+	//mdl_PalmTree->Draw(m_camera);
+
+	mdl_Sponza->Draw(m_camera);
 
 
 	//glBindVertexArray(m_VAO);

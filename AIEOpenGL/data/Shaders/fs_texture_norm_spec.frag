@@ -14,6 +14,7 @@ uniform sampler2D normal;
 uniform sampler2D specmap;
 uniform vec3 lightposition;
 uniform vec3 lightdirection;
+uniform vec4 lightcolor;
 uniform float time;
 uniform vec3 camerapos;
 uniform float alpha;
@@ -23,18 +24,22 @@ uniform float lightrange = 50.f;
 
 vec2 nextTextCoord;
 
-vec4 calcpointlight(vec4 TextureColor, vec3 normal, vec3 worldPos, vec3 lightPos)
+vec4 calcpointlight(vec4 TextureColor, vec3 normal, vec3 worldPos, vec3 lightPos, vec4 color)
 {
 	vec3 delta = lightPos - worldPos;
 	vec3 lightDir = normalize(delta);
 
-	float distance = length(lightDir);
+	float distance = length(delta);
+
 	float attenuation = (lightrange - distance) / lightrange;
 	attenuation = clamp(attenuation, 0, 1);
 	attenuation = pow(attenuation, 2);
+
 	float lambert = clamp(dot(normal, lightDir), 0, 1);
 
-	return (TextureColor * vec4(1, 0, 0, 1)) * lambert * attenuation;
+	vec4 endValue;
+	endValue = TextureColor * color * lambert * attenuation;
+	return endValue;
 }
 
 void main() 
@@ -52,7 +57,7 @@ void main()
 	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal * 2));
 
 	vec3 E = normalize(camerapos - vPosition.xyz);
-	vec3 R = reflect(-lightdirection, (SM.xyz + vNormal.xyz) * 0.5f);
+	vec3 R = reflect(-normalize(lightposition), (SM.xyz + vNormal.xyz));
 
 	float s = max(0, dot(E, R));
 	s = pow(s, specpow); //specpow
@@ -60,12 +65,13 @@ void main()
 	float d = 0;
 	d = max(0, dot(normalize(TBN * N), lightdirection));
 
-	//lightposition = vec3(0, 1, .5f);
-
-	vec4 pointLight = calcpointlight(TextureColor, N.xyz, vPosition.xyz, vec3(0, 1, .5f));
-
+	vec4 pointLight = calcpointlight(TextureColor, N.xyz, vPosition.xyz, lightposition, lightcolor);
 
 	TextureColor.a *= alpha;
-	TextureColor.rgb = (TextureColor.rgb * d) + (TextureColor.rgb * s);
-	FragColor = amb + TextureColor;
+
+	vec4 Specular = TextureColor * s;
+
+	vec4 LightDirectional = TextureColor * d;
+
+	FragColor = amb + TextureColor + Specular;
 }

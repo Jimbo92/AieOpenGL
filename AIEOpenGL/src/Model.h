@@ -18,6 +18,9 @@
 #include <GLFW/glfw3.h>
 
 #include <Shader.h>
+#include <FBXFile.h>
+
+
 
 struct OpenGLInfo
 {
@@ -30,7 +33,7 @@ struct OpenGLInfo
 class Model
 {
 public:
-	Model(const char* Filepath, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
+	Model(const char* Filepath, unsigned int modeltype = 0, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
 	~Model();
 
 	void createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes);
@@ -58,6 +61,21 @@ public:
 	std::map<std::string, int> m_TextureMap;
 
 	std::vector<unsigned int> m_Textures;
+
+
+	//FBX Stuff
+	void CreateFBX(FBXFile* fbx);
+	void CleanUpFBX(FBXFile* fbx);
+
+	FBXFile* m_FBXModel = nullptr;
+
+	unsigned int m_vertexAttributes;
+	FBXMaterial* m_material;
+	std::vector<FBXVertex> m_vertices;
+	std::vector<unsigned int> m_indices;
+	glm::mat4 m_localTransform;
+	glm::mat4 m_globalTransform;
+	void* m_userData;
 
 
 private:

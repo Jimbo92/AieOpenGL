@@ -67,6 +67,7 @@ private:
 
 	Shader* WaterShader;
 
+	Model* mdl_Sponza;
 
 };
 

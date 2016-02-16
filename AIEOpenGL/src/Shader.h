@@ -48,5 +48,7 @@ public:
 
 	float m_alpha = 1.f;
 	float m_specpow = 0.f;
+
+	glm::vec4 m_ambientlight = glm::vec4(0.25f, 0.25f, 0.25f, 1);
 };
 

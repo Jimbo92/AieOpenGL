@@ -2,40 +2,112 @@
 
 
 
-Model::Model(const char* FilePath, glm::vec3 InitialLocation, glm::vec3 InitialScale)
+Model::Model(const char* FilePath, unsigned int modeltype, glm::vec3 InitialLocation, glm::vec3 InitialScale)
 {
-	std::string ObjPath = FilePath;
-	ObjPath.append(".obj");
-
-	bool successful = tinyobj::LoadObj(shapes, materials, err, ObjPath.c_str());
-	if (!successful)
+	if (modeltype == 0) //OBJ load
 	{
-		std::cout << "Error Loading Model" << FilePath << std::endl;
-	}
-	assert(successful);
+		std::string ObjPath = FilePath;
+		ObjPath.append(".obj");
 
-	std::ifstream texturestream;
-
-	//load material ID's
-	std::string MtlPath = FilePath;
-	MtlPath.append(".mtl");
-	texturestream.open(MtlPath, std::ios::in);
-	tinyobj::LoadMtl(m_TextureMap, materials, texturestream);
-
-	for each (tinyobj::material_t mat in materials)
-	{
-		auto itter = m_TextureMap.find(mat.name);
-		if (itter != m_TextureMap.end())
+		bool successful = tinyobj::LoadObj(shapes, materials, err, ObjPath.c_str());
+		if (!successful)
 		{
-			Texture* tempTexture = new Texture(mat.diffuse_texname.c_str());
-			m_Textures.push_back(tempTexture->m_texture);
-		}	
-	}
+			std::cout << "Error Loading Model" << FilePath << std::endl;
+		}
+		assert(successful);
 
-	createOpenGLBuffers(shapes);
+		std::ifstream texturestream;
+
+		//load material ID's
+		std::string MtlPath = FilePath;
+		MtlPath.append(".mtl");
+		texturestream.open(MtlPath, std::ios::in);
+		tinyobj::LoadMtl(m_TextureMap, materials, texturestream);
+
+		for each (tinyobj::material_t mat in materials)
+		{
+			auto itter = m_TextureMap.find(mat.name);
+			if (itter != m_TextureMap.end())
+			{
+				Texture* tempTexture = new Texture(mat.diffuse_texname.c_str());
+				m_Textures.push_back(tempTexture->m_texture);
+			}
+		}
+
+		createOpenGLBuffers(shapes);
+	}
+	else if (modeltype == 1) //FBX Load
+	{
+		m_FBXModel = new FBXFile();
+		m_FBXModel->load(FilePath);
+		CreateFBX(m_FBXModel);
+	}
 
 	m_Location = InitialLocation;
 	m_Scale = InitialScale;
+}
+
+void Model::CreateFBX(FBXFile* fbx)
+{
+	//create GL VAO/VBO/IBO buffers
+	for (unsigned int i = 0; i < fbx->getMeshCount(); ++i)
+	{
+		FBXMeshNode* mesh = fbx->getMeshByIndex(i);
+
+		//storage for opengl data
+		unsigned int* glData = new unsigned int[3];
+
+		glGenVertexArrays(1, &glData[0]);
+		glBindVertexArray(glData[0]);
+
+		glGenBuffers(1, &glData[1]);
+		glGenBuffers(1, &glData[2]);
+
+		glBindBuffer(GL_ARRAY_BUFFER, glData[1]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glData[2]);
+
+		glBufferData(GL_ARRAY_BUFFER, mesh->m_vertices.size() * sizeof(FBXVertex), mesh->m_vertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->m_vertices.size() * sizeof(unsigned int), mesh->m_vertices.data(), GL_STATIC_DRAW);
+
+
+		glEnableVertexAttribArray(0); //position
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), 0);
+
+		glEnableVertexAttribArray(1); //normal
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(FBXVertex), (char*)0 + FBXVertex::NormalOffset);
+
+		glEnableVertexAttribArray(2); //Tangent
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (char*)0 + FBXVertex::TangentOffset);
+
+		glEnableVertexAttribArray(3); //BiTangent
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_TRUE, sizeof(FBXVertex), (char*)0 + FBXVertex::BiNormalOffset);
+
+		glEnableVertexAttribArray(4); //TexCoords
+		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (char*)0 + FBXVertex::TexCoord1Offset);
+
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		mesh->m_userData = glData;
+	}
+}
+
+void Model::CleanUpFBX(FBXFile* fbx)
+{
+	//clean up the vertex data of each mesh
+	for (unsigned int i = 0; i < fbx->getMeshCount(); ++i)
+	{
+		FBXMeshNode* mesh = fbx->getMeshByIndex(i);
+
+		unsigned int* glData = (unsigned int*)mesh->m_userData;
+
+		glDeleteVertexArrays(1, &glData[0]);
+		glDeleteBuffers(1, &glData[1]);
+		glDeleteBuffers(1, &glData[2]);
+
+		delete[] glData;
+	}
 }
 
 void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
@@ -103,12 +175,29 @@ void Model::Draw(Camera* camera)
 	//	ModelShader->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
 	//}
 
-	for (unsigned int i = 0; i < m_gl_info.size(); ++i)
+	if (m_FBXModel != nullptr) //Draw FBX
 	{
-		ModelShaders[i]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
+		ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
 
-		glBindVertexArray(m_gl_info[i].m_VAO);
-		glDrawElements(GL_TRIANGLES, m_gl_info[i].m_index_count, GL_UNSIGNED_INT, 0);
+		for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); ++i)
+		{
+			FBXMeshNode* mesh = m_FBXModel->getMeshByIndex(i);
+
+			unsigned int* glData = (unsigned int*)mesh->m_userData;
+
+			glBindVertexArray(glData[0]);
+			glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+		}
+	}
+	else //Draw OBJ
+	{
+		for (unsigned int i = 0; i < m_gl_info.size(); ++i)
+		{
+			ModelShaders[i]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
+
+			glBindVertexArray(m_gl_info[i].m_VAO);
+			glDrawElements(GL_TRIANGLES, m_gl_info[i].m_index_count, GL_UNSIGNED_INT, 0);
+		}
 	}
 }
 

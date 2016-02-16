@@ -12,15 +12,36 @@ out vec4 FragColor;
 
 uniform sampler2D diffuse; 
 uniform sampler2D normal;
+uniform vec3 lightposition;
 uniform vec3 lightdirection;
+uniform vec4 lightcolor;
 uniform float time;
 uniform vec3 camerapos;
 uniform float alpha;
 uniform float specpow;
 uniform vec3 ambient = vec3(0.25f, 0.25f, 0.25f);
+uniform float lightrange = 50.f;
 
 vec2 nextTextCoord;
 vec2 nextTextCoord2;
+
+vec4 calcpointlight(vec4 TextureColor, vec3 normal, vec3 worldPos, vec3 lightPos, vec4 color)
+{
+	vec3 delta = lightPos - worldPos;
+	vec3 lightDir = normalize(delta);
+
+	float distance = length(delta);
+
+	float attenuation = (lightrange - distance) / lightrange;
+	attenuation = clamp(attenuation, 0, 1);
+	attenuation = pow(attenuation, 2);
+
+	float lambert = clamp(dot(normal, lightDir), 0, 1);
+
+	vec4 endValue;
+	endValue = TextureColor * color * lambert * attenuation;
+	return endValue;
+}
 
 void main() 
 { 

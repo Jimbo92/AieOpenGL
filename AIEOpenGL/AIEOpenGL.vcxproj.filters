@@ -95,6 +95,9 @@
     <ClInclude Include="src\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dep\fbxloader\FBXFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\vshader.vert">

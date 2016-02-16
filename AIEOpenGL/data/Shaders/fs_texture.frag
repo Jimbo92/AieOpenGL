@@ -12,6 +12,8 @@ out vec4 FragColor;
 uniform sampler2D diffuse; 
 uniform sampler2D normal;
 uniform vec3 lightdirection;
+uniform vec3 lightposition;
+uniform vec4 lightcolor;
 uniform vec3 ambient = vec3(0.25f, 0.25f, 0.25f);
 uniform float lightrange = 35.f;
 uniform float time;
@@ -51,16 +53,9 @@ void main()
 
 	vec4 amb = vec4(ambient * TextureColor.xyz, 1);
 
-	vec3 LP = vec3(0, 10, 0);
-	LP.x = cos(time * 0.5f) * 20.f;
-	LP.z = sin(time * 0.5f) * 20.f;
-
-	vec4 LPColor = vec4(0, .5, .5, 1);
-	LPColor.x = cos(time * 10.5f);
-
-	vec4 pointLight = calcpointlight(TextureColor, vNormal.xyz, vPosition.xyz, LP, LPColor);
+	vec4 pointLight = calcpointlight(TextureColor, vNormal.xyz, vPosition.xyz, lightposition, lightcolor);
 
 	TextureColor.a *= alpha;
 	TextureColor.rgb *= d;
-	FragColor = amb + pointLight;
+	FragColor = vec4(1,1,1,1);
 }
