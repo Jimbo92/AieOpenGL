@@ -31,6 +31,7 @@ GeometryApp::~GeometryApp()
 {
 	delete LucyModel;
 	delete BunnyModel;
+	delete mdl_Sponza;
 }
 
 bool GeometryApp::startup()
@@ -49,7 +50,6 @@ bool GeometryApp::startup()
 
 	//===================//Load OBJ models//==============================//
 	
-	/*
 	Texture* earthTexture = new Texture("./data/ruinedtank/ground_diff.jpg");
 	Shader* CoolShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture.frag", earthTexture);
 	CoolShader->m_light = m_testLight;
@@ -138,12 +138,9 @@ bool GeometryApp::startup()
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeBranchShader);
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeTrunkShader);
-	*/
 
-	Shader* NormalShader = new Shader("./data/vs_texture.vert", "./data/fs_texture.frag");
-	NormalShader->m_light = m_testLight;
 	mdl_Sponza = new Model("./data/soulspear/soulspear.fbx", 1);
-	mdl_Sponza->ModelShaders.push_back(NormalShader);
+	mdl_Sponza->ModelShaders.push_back(SwordShader);
 
 
 	return true;
@@ -157,7 +154,7 @@ void GeometryApp::shutdown()
 	delete m_camera;
 	Gizmos::destroy();
 
-	mdl_Sponza->CleanUpFBX(mdl_Sponza->m_FBXModel);
+	//mdl_Sponza->CleanUpFBX(mdl_Sponza->m_FBXModel);
 
 	// destroy our window properly
 	destroyWindow();
@@ -179,10 +176,10 @@ bool GeometryApp::update(float deltaTime)
 
 	m_testLight->m_lightPos = glm::vec3(sin(glfwGetTime()) * 25.f, cos(glfwGetTime()) * 25.f, 0);
 
-	//SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
-	//SwordModel->m_RotAmount = sin(glfwGetTime());
-	//
-	//SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
+	SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
+	SwordModel->m_RotAmount = sin(glfwGetTime());
+	
+	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
 
 	//generate the grid
 	//generateGrid(64, 64);
@@ -280,7 +277,7 @@ void GeometryApp::draw()
 
 	//LucyModel->Draw(m_camera);
 	//BunnyModel->Draw(m_camera);
-	//SwordModel->Draw(m_camera);
+	SwordModel->Draw(m_camera);
 
 	//WaterModelTest->Draw(m_camera);
 

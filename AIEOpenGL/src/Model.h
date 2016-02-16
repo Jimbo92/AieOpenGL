@@ -69,15 +69,6 @@ public:
 
 	FBXFile* m_FBXModel = nullptr;
 
-	unsigned int m_vertexAttributes;
-	FBXMaterial* m_material;
-	std::vector<FBXVertex> m_vertices;
-	std::vector<unsigned int> m_indices;
-	glm::mat4 m_localTransform;
-	glm::mat4 m_globalTransform;
-	void* m_userData;
-
-
 private:
 
 

@@ -50,7 +50,7 @@ Model::Model(const char* FilePath, unsigned int modeltype, glm::vec3 InitialLoca
 void Model::CreateFBX(FBXFile* fbx)
 {
 	//create GL VAO/VBO/IBO buffers
-	for (unsigned int i = 0; i < fbx->getMeshCount(); ++i)
+	for (unsigned int i = 0; i < fbx->getMeshCount(); i++)
 	{
 		FBXMeshNode* mesh = fbx->getMeshByIndex(i);
 
@@ -124,16 +124,16 @@ void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
 		glBindVertexArray(m_gl_info[mesh_index].m_VAO);
 
 		unsigned int float_count = shapes[mesh_index].mesh.positions.size();
-		float_count += shapes[mesh_index].mesh.texcoords.size();
 		float_count += shapes[mesh_index].mesh.normals.size();
+		float_count += shapes[mesh_index].mesh.texcoords.size();
 
 
 		std::vector<float> vertex_data;
 		vertex_data.reserve(float_count);
 
 		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.positions.begin(), shapes[mesh_index].mesh.positions.end());
-		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.texcoords.begin(), shapes[mesh_index].mesh.texcoords.end());
 		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.normals.begin(), shapes[mesh_index].mesh.normals.end());
+		vertex_data.insert(vertex_data.end(), shapes[mesh_index].mesh.texcoords.begin(), shapes[mesh_index].mesh.texcoords.end());
 
 		m_gl_info[mesh_index].m_index_count = shapes[mesh_index].mesh.indices.size();
 
@@ -148,13 +148,15 @@ void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
 		unsigned int offset = 0;
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 
-		glEnableVertexAttribArray(1); //Texture Coords
-		offset += (sizeof(float) * shapes[mesh_index].mesh.positions.size());
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
-
 		glEnableVertexAttribArray(2); //normal
-		offset += (sizeof(float) * shapes[mesh_index].mesh.texcoords.size());
+		offset += (sizeof(float) * shapes[mesh_index].mesh.positions.size());
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_TRUE, 0, (void*)offset);
+
+		glEnableVertexAttribArray(3); //Texture Coords
+		offset += (sizeof(float) * shapes[mesh_index].mesh.normals.size());
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+
+
 
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -179,12 +181,12 @@ void Model::Draw(Camera* camera)
 	{
 		ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
 
-		for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); ++i)
+		for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); i++)
 		{
 			FBXMeshNode* mesh = m_FBXModel->getMeshByIndex(i);
-
+	
 			unsigned int* glData = (unsigned int*)mesh->m_userData;
-
+	
 			glBindVertexArray(glData[0]);
 			glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
 		}
@@ -204,4 +206,6 @@ void Model::Draw(Camera* camera)
 
 Model::~Model()
 {
+	delete m_FBXModel;
+	CleanUpFBX(m_FBXModel);
 }
