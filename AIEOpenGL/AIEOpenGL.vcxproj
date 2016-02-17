@@ -56,6 +56,7 @@
     <None Include="data\Shaders\fs_texture_norm.frag" />
     <None Include="data\Shaders\fs_texture_norm_spec.frag" />
     <None Include="data\Shaders\fs_texture_wave.frag" />
+    <None Include="data\Shaders\vs_animation.vert" />
     <None Include="data\Shaders\vs_branch.vert" />
     <None Include="data\Shaders\vs_grass.vert" />
     <None Include="data\Shaders\vs_texture.vert" />

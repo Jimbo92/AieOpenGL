@@ -136,5 +136,8 @@
     <None Include="data\Shaders\vs_branch.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="data\Shaders\vs_animation.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

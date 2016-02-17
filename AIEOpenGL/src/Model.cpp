@@ -49,26 +49,29 @@ Model::Model(const char* FilePath, unsigned int modeltype, glm::vec3 InitialLoca
 
 void Model::CreateFBX(FBXFile* fbx)
 {
+	m_gl_info.resize(fbx->getMeshCount());
+
 	//create GL VAO/VBO/IBO buffers
-	for (unsigned int i = 0; i < fbx->getMeshCount(); i++)
+	for (unsigned int meshIndex = 0; meshIndex < fbx->getMeshCount(); meshIndex++)
 	{
-		FBXMeshNode* mesh = fbx->getMeshByIndex(i);
+		glGenVertexArrays(1, &m_gl_info[meshIndex].m_VAO);
+		glGenBuffers(1, &m_gl_info[meshIndex].m_VBO);
+		glGenBuffers(1, &m_gl_info[meshIndex].m_IBO);
 
-		//storage for opengl data
-		unsigned int* glData = new unsigned int[3];
+		//bind vertex array
+		glBindVertexArray(m_gl_info[meshIndex].m_VAO);
 
-		glGenVertexArrays(1, &glData[0]);
-		glBindVertexArray(glData[0]);
+		FBXMeshNode* mesh = fbx->getMeshByIndex(meshIndex);
+		auto vertexData = mesh->m_vertices;
 
-		glGenBuffers(1, &glData[1]);
-		glGenBuffers(1, &glData[2]);
+		glBindBuffer(GL_ARRAY_BUFFER, m_gl_info[meshIndex].m_VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(FBXVertex), vertexData.data(), GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ARRAY_BUFFER, glData[1]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glData[2]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_gl_info[meshIndex].m_IBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->m_indices.size() * sizeof(unsigned int), mesh->m_indices.data(), GL_STATIC_DRAW);
 
-		glBufferData(GL_ARRAY_BUFFER, mesh->m_vertices.size() * sizeof(FBXVertex), mesh->m_vertices.data(), GL_STATIC_DRAW);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->m_vertices.size() * sizeof(unsigned int), mesh->m_vertices.data(), GL_STATIC_DRAW);
 
+		m_gl_info[meshIndex].m_index_count = mesh->m_indices.size();
 
 		glEnableVertexAttribArray(0); //position
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), 0);
@@ -85,11 +88,16 @@ void Model::CreateFBX(FBXFile* fbx)
 		glEnableVertexAttribArray(4); //TexCoords
 		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (char*)0 + FBXVertex::TexCoord1Offset);
 
+		//Skinning
+		glEnableVertexAttribArray(5); //bone weight
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (char*)0 + FBXVertex::WeightsOffset);
+
+		glEnableVertexAttribArray(6); //bone index
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (char*)0 + FBXVertex::IndicesOffset);
+
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		mesh->m_userData = glData;
 	}
 }
 
@@ -157,7 +165,6 @@ void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 
 
-
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -167,7 +174,23 @@ void Model::createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes)
 
 void Model::Update(float DeltaTime)
 {
+	//grab the skeleton and animation
+	FBXSkeleton* skeleton = m_FBXModel->getSkeletonByIndex(0);
+	FBXAnimation* animation = m_FBXModel->getAnimationByIndex(0);
 
+	//evaluate the animation to update bones
+	skeleton->evaluate(animation, glfwGetTime());
+
+	for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; bone_index++)
+	{
+		skeleton->m_nodes[bone_index]->updateGlobalTransform();
+	}
+
+	//update uniform within shader
+	for (int i = 0; i < ModelShaders.size(); i++)
+	{
+		ModelShaders[i]->UpdateBones(skeleton);
+	}
 }
 
 void Model::Draw(Camera* camera)
@@ -177,30 +200,31 @@ void Model::Draw(Camera* camera)
 	//	ModelShader->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
 	//}
 
-	if (m_FBXModel != nullptr) //Draw FBX
-	{
-		ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
-
-		for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); i++)
-		{
-			FBXMeshNode* mesh = m_FBXModel->getMeshByIndex(i);
-	
-			unsigned int* glData = (unsigned int*)mesh->m_userData;
-	
-			glBindVertexArray(glData[0]);
-			glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
-		}
-	}
-	else //Draw OBJ
-	{
+	//if (m_FBXModel != nullptr) //Draw FBX
+	//{
+	//	ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
+	//
+	//	for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); i++)
+	//	{
+	//		FBXMeshNode* mesh = m_FBXModel->getMeshByIndex(i);
+	//
+	//		unsigned int* glData = (unsigned int*)mesh->m_userData;
+	//
+	//
+	//		glBindVertexArray(glData[0]);
+	//		glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+	//	}
+	//}
+	//else //Draw OBJ
+	//{
 		for (unsigned int i = 0; i < m_gl_info.size(); ++i)
 		{
-			ModelShaders[i]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
+			ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
 
 			glBindVertexArray(m_gl_info[i].m_VAO);
 			glDrawElements(GL_TRIANGLES, m_gl_info[i].m_index_count, GL_UNSIGNED_INT, 0);
 		}
-	}
+	//}
 }
 
 

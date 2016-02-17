@@ -44,7 +44,7 @@ void main()
 { 
 	//flip y axis on texture coords to correct rotation
 	nextTextCoord = vTexCoord;
-	nextTextCoord.y = vTexCoord.y * -1;
+	//nextTextCoord.y = vTexCoord.y * -1;
 
 	float d = 0;
 	d = max(0, dot(normalize(vNormal), lightdirection));
@@ -57,5 +57,5 @@ void main()
 
 	TextureColor.a *= alpha;
 	TextureColor.rgb *= d;
-	FragColor = vec4(1,1,1,1);
+	FragColor = TextureColor;
 }

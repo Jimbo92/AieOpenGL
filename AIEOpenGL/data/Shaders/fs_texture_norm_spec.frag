@@ -46,7 +46,7 @@ void main()
 { 
 	//flip y axis on texture coords to correct rotation
 	nextTextCoord = vTexCoord;
-	nextTextCoord.y = vTexCoord.y * -1;
+	//nextTextCoord.y = vTexCoord.y * -1;
 
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
 	vec3 SM = texture(specmap, nextTextCoord).xyz;
@@ -54,7 +54,7 @@ void main()
 
 	vec4 amb = vec4(ambient * TextureColor.xyz, 1);
 
-	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal * 2));
+	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal));
 
 	vec3 E = normalize(camerapos - vPosition.xyz);
 	vec3 R = reflect(-normalize(lightposition), (SM.xyz + vNormal.xyz));

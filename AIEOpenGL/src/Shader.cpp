@@ -49,6 +49,17 @@ Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Tex
 	glDeleteShader(FragShader);
 }
 
+void Shader::UpdateBones(FBXSkeleton* skeleton)
+{
+	if (skeleton != nullptr)
+	{
+		skeleton->updateBones();
+
+		unsigned int boneLocationUniform = glGetUniformLocation(m_programID, "bones");
+		glUniformMatrix4fv(boneLocationUniform, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+	}
+}
+
 void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 scale, glm::vec3 RotationAxis, float RotationAmount)
 {
 	//bind shader
@@ -110,17 +121,20 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	unsigned int cameraposUniform = glGetUniformLocation(m_programID, "camerapos");
 	glUniform3f(cameraposUniform, camPos.x, camPos.y, camPos.z);
 
-	unsigned int lightdirUniform = glGetUniformLocation(m_programID, "lightdirection");
-	glUniform3f(lightdirUniform, m_light->m_lightDir.x, m_light->m_lightDir.y, m_light->m_lightDir.z);
+	if (m_light != nullptr)
+	{
+		unsigned int lightdirUniform = glGetUniformLocation(m_programID, "lightdirection");
+		glUniform3f(lightdirUniform, m_light->m_lightDir.x, m_light->m_lightDir.y, m_light->m_lightDir.z);
 
-	unsigned int lightposUniform = glGetUniformLocation(m_programID, "lightposition");
-	glUniform3f(lightposUniform, m_light->m_lightPos.x, m_light->m_lightPos.y, m_light->m_lightPos.z);
+		unsigned int lightposUniform = glGetUniformLocation(m_programID, "lightposition");
+		glUniform3f(lightposUniform, m_light->m_lightPos.x, m_light->m_lightPos.y, m_light->m_lightPos.z);
 
-	unsigned int lightcolorUniform = glGetUniformLocation(m_programID, "lightcolor");
-	glUniform4f(lightcolorUniform, m_light->m_lightColor.r, m_light->m_lightColor.g, m_light->m_lightColor.b, m_light->m_lightColor.a);
+		unsigned int lightcolorUniform = glGetUniformLocation(m_programID, "lightcolor");
+		glUniform4f(lightcolorUniform, m_light->m_lightColor.r, m_light->m_lightColor.g, m_light->m_lightColor.b, m_light->m_lightColor.a);
 
-	unsigned int lightrangeUniform = glGetUniformLocation(m_programID, "lightrange");
-	glUniform1f(lightrangeUniform, m_light->m_lightRange);
+		unsigned int lightrangeUniform = glGetUniformLocation(m_programID, "lightrange");
+		glUniform1f(lightrangeUniform, m_light->m_lightRange);
+	}
 
 	unsigned int ambientcolorUniform = glGetUniformLocation(m_programID, "ambient");
 	glUniform3f(ambientcolorUniform, m_ambientlight.r, m_ambientlight.g, m_ambientlight.b);

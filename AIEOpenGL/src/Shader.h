@@ -20,6 +20,8 @@
 
 #include <Light.h>
 
+#include <FBXFile.h>
+
 class Shader
 {
 public:
@@ -40,7 +42,7 @@ public:
 	std::string m_FragShader;
 	std::string LoadShader(const char *filePath);
 
-	Light* m_light;
+	Light* m_light = nullptr;
 
 	Texture* m_textureFile;
 	Texture* m_textureNormal;
@@ -48,6 +50,8 @@ public:
 
 	float m_alpha = 1.f;
 	float m_specpow = 0.f;
+
+	void UpdateBones(FBXSkeleton* skeleton);
 
 	glm::vec4 m_ambientlight = glm::vec4(0.25f, 0.25f, 0.25f, 1);
 };
