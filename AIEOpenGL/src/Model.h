@@ -33,7 +33,7 @@ struct OpenGLInfo
 class Model
 {
 public:
-	Model(const char* Filepath, unsigned int modeltype = 0, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
+	Model(const char* Filepath, unsigned int modeltype = 0, bool isAnimated = false, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
 	~Model();
 
 	void createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes);

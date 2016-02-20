@@ -48,6 +48,8 @@ public:
 	Texture* m_textureNormal;
 	Texture* m_textureSpecmap;
 
+	std::vector<Texture*> m_Textures;
+
 	float m_alpha = 1.f;
 	float m_specpow = 0.f;
 

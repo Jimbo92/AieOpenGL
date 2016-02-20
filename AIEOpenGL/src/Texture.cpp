@@ -10,19 +10,14 @@ Texture::Texture(const char* FilePath)
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	switch (imageFormat)
 	{
-	case 0:
+	case 1:
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, imageWidth, imageHeight, 0, GL_RED, GL_UNSIGNED_BYTE, data);
 		break;
 	}
-	case 1:
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, imageWidth, imageHeight, 0, GL_RG, GL_UNSIGNED_BYTE, data);
-		break;
-	}
 	case 2:
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, imageWidth, imageHeight, 0, GL_R8, GL_UNSIGNED_BYTE, data);
 		break;
 	}
 	case 3:
@@ -36,7 +31,10 @@ Texture::Texture(const char* FilePath)
 		break;
 	}
 	default:
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		break;
+	}
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

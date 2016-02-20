@@ -46,7 +46,7 @@ bool GeometryApp::startup()
 	m_camera = new Camera(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
-	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 10.f);
+	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
 
 	//===================//Load OBJ models//==============================//
 	
@@ -141,34 +141,36 @@ bool GeometryApp::startup()
 	mdl_PalmTree->ModelShaders.push_back(PalmTreeTrunkShader);
 	*/
 
-	Texture* pyro_Texture = new Texture("./data/characters/Pyro/Pyro_D.tga");
-	Texture* pyro_Texture_N = new Texture("./data/characters/Pyro/Pyro_N.tga");
-	Texture* pyro_Texture_S = new Texture("./data/characters/Pyro/Pyro_S.tga");
+	//Texture* pyro_Texture = new Texture("./data/characters/Enemytank/EnemyTank_D.tga");
+	//Texture* pyro_Texture_N = new Texture("./data/characters/Enemytank/EnemyTank_N.tga");
+	//Texture* pyro_Texture_S = new Texture("./data/characters/Enemytank/EnemyTank_S.tga");
+	//
+	//Texture* pyroGun_Texture = new Texture("./data/characters/Pyro/Flamethrower_D.png");
+	//Texture* pyroGun_Texture_N = new Texture("./data/characters/Pyro/Flamethrower_N.png");
+	//Texture* pyroGun_Texture_S = new Texture("./data/characters/Pyro/Flamethrower_S.png");
+	//
+	//Shader* pyro_Shader = new Shader("./data/Shaders/vs_animation.vert", "./data/Shaders/fs_texture_norm_spec.frag", pyro_Texture, pyro_Texture_N, pyro_Texture_S);
+	//pyro_Shader->m_light = m_testLight;
+	//pyro_Shader->m_specpow = 0.5f;
+	//
+	//Shader* pyroGun_Shader = new Shader("./data/Shaders/vs_animation.vert", "./data/Shaders/fs_texture_norm_spec.frag", pyroGun_Texture, pyroGun_Texture_N, pyroGun_Texture_S);
+	//pyroGun_Shader->m_light = m_testLight;
+	//pyroGun_Shader->m_specpow = 1.5f;
 
-	Texture* pyroGun_Texture = new Texture("./data/characters/Pyro/Flamethrower_D.png");
-	Texture* pyroGun_Texture_N = new Texture("./data/characters/Pyro/Flamethrower_N.png");
-	Texture* pyroGun_Texture_S = new Texture("./data/characters/Pyro/Flamethrower_S.png");
+	mdl_Sponza = new Model("./data/characters/Enemytank/EnemyTank.fbx", 1, true, glm::vec3(0), glm::vec3(0.001, 0.001, 0.001));
+	mdl_Sponza->ModelShaders[0]->m_light = m_testLight;
+	//mdl_Sponza->ModelShaders.push_back(pyro_Shader);
+	//mdl_Sponza->ModelShaders.push_back(pyroGun_Shader);
 
-	Shader* pyro_Shader = new Shader("./data/Shaders/vs_animation.vert", "./data/Shaders/fs_texture_norm_spec.frag", pyro_Texture, pyro_Texture_N, pyro_Texture_S);
-	pyro_Shader->m_light = m_testLight;
-	pyro_Shader->m_specpow = 1.2f;
-
-	Shader* pyroGun_Shader = new Shader("./data/Shaders/vs_animation.vert", "./data/Shaders/fs_texture_norm_spec.frag", pyroGun_Texture, pyroGun_Texture_N, pyroGun_Texture_S);
-	pyroGun_Shader->m_light = m_testLight;
-	pyroGun_Shader->m_specpow = 1.2f;
-
-	mdl_Sponza = new Model("./data/characters/Pyro/pyro.fbx", 1, glm::vec3(0), glm::vec3(0.001, 0.001, 0.001));
-	mdl_Sponza->ModelShaders.push_back(pyro_Shader);
-	mdl_Sponza->ModelShaders.push_back(pyroGun_Shader);
-
-	Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
-	Texture* SwordTexture_N = new Texture("./data/soulspear/soulspear_normal.tga");
-	Texture* SwordTexture_Spec = new Texture("./data/soulspear/soulspear_specular.tga");
-	Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag", SwordTexture, SwordTexture_N, SwordTexture_Spec);
-	SwordShader->m_light = m_testLight;
-	SwordShader->m_specpow = 1.2f;
-	SwordModel = new Model("./data/soulspear/soulspear.fbx", 1, vec3(0, 5, 0));
-	SwordModel->ModelShaders.push_back(SwordShader);
+	//Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
+	//Texture* SwordTexture_N = new Texture("./data/soulspear/soulspear_normal.tga");
+	//Texture* SwordTexture_Spec = new Texture("./data/soulspear/soulspear_specular.tga");
+	//Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag", SwordTexture, SwordTexture_N, SwordTexture_Spec);
+	//SwordShader->m_light = m_testLight;
+	//SwordShader->m_specpow = 5.5f;
+	SwordModel = new Model("./data/soulspear/soulspear.fbx", 1, false, vec3(0, 5, 0));
+	SwordModel->ModelShaders[0]->m_light = m_testLight;
+	//SwordModel->ModelShaders.push_back(SwordShader);
 
 
 	return true;
@@ -206,10 +208,10 @@ bool GeometryApp::update(float deltaTime)
 
 	mdl_Sponza->Update(deltaTime);
 
-	//SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
-	//SwordModel->m_RotAmount = sin(glfwGetTime());
+	SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
+	SwordModel->m_RotAmount = sin(glfwGetTime());
 	//
-	//SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
+	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
 
 	//generate the grid
 	//generateGrid(64, 64);

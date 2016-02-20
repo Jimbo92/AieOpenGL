@@ -57,21 +57,20 @@ void main()
 	mat3 TBN = mat3(normalize(vTangent), normalize(vBiTangent), normalize(vNormal));
 
 	vec3 E = normalize(camerapos - vPosition.xyz);
-	vec3 R = reflect(-normalize(lightposition), (SM.xyz + vNormal.xyz));
+	vec3 R = reflect(-normalize(lightposition), TBN * SM.xyz);
 
-	float s = max(0, dot(E, R));
-	s = pow(s, specpow); //specpow
+	float s = pow(max(0.f, dot( E, R )), specpow);
 
 	float d = 0;
-	d = max(0, dot(normalize(TBN * N), lightdirection));
+	d = max(0, dot(normalize(TBN * N), normalize(lightposition)));
 
 	vec4 pointLight = calcpointlight(TextureColor, N.xyz, vPosition.xyz, lightposition, lightcolor);
 
 	TextureColor.a *= alpha;
 
-	vec4 Specular = TextureColor * s;
+	vec3 Specular = TextureColor.xyz * s;
 
 	vec4 LightDirectional = TextureColor * d;
 
-	FragColor = amb + TextureColor + Specular;
+	FragColor = vec4(amb.xyz + TextureColor.xyz + Specular, 1);
 }

@@ -82,28 +82,28 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(CurrentCamera->getProjectionView() * LocalMatrix));
 
 	//set texture slot
-	if (m_textureFile != nullptr)
+	if (m_Textures[0] != nullptr)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_textureFile->m_texture);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[0]->m_texture);
 	}
 	projectionViewUniform = glGetUniformLocation(m_programID, "diffuse");
 	glUniform1i(projectionViewUniform, 0);
 
 	//Set normal map
-	if (m_textureNormal != nullptr)
+	if (m_Textures[1] != nullptr)
 	{
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_textureNormal->m_texture);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[1]->m_texture);
 	}
 	projectionViewUniform = glGetUniformLocation(m_programID, "normal");
 	glUniform1i(projectionViewUniform, 1);
 
 	//Set spec map
-	if (m_textureSpecmap != nullptr)
+	if (m_Textures[2] != nullptr)
 	{
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_textureSpecmap->m_texture);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[2]->m_texture);
 	}
 	projectionViewUniform = glGetUniformLocation(m_programID, "specmap");
 	glUniform1i(projectionViewUniform, 2);

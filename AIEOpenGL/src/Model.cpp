@@ -2,7 +2,7 @@
 
 
 
-Model::Model(const char* FilePath, unsigned int modeltype, glm::vec3 InitialLocation, glm::vec3 InitialScale)
+Model::Model(const char* FilePath, unsigned int modeltype, bool isAnimated, glm::vec3 InitialLocation, glm::vec3 InitialScale)
 {
 	if (modeltype == 0) //OBJ load
 	{
@@ -41,6 +41,38 @@ Model::Model(const char* FilePath, unsigned int modeltype, glm::vec3 InitialLoca
 		m_FBXModel = new FBXFile();
 		m_FBXModel->load(FilePath);
 		CreateFBX(m_FBXModel);
+
+		for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); i++)
+		{
+			if (!isAnimated)
+			{
+				Shader* TempShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag");
+
+				TempShader->m_specpow = 1.5f;
+
+				for (unsigned int i = 0; i < m_FBXModel->getTextureCount(); i++)
+				{
+					Texture* TempText = new Texture(m_FBXModel->getTextureByIndex(i)->path.c_str());
+					TempShader->m_Textures.push_back(TempText);
+				}
+
+				ModelShaders.push_back(TempShader);
+			}
+			else
+			{
+				Shader* TempShader = new Shader("./data/Shaders/vs_animation.vert", "./data/Shaders/fs_texture_norm_spec.frag");
+
+				TempShader->m_specpow = 1.5f;
+
+				for (unsigned int i = 0; i < m_FBXModel->getTextureCount(); i++)
+				{
+					Texture* TempText = new Texture(m_FBXModel->getTextureByIndex(i)->path.c_str());
+					TempShader->m_Textures.push_back(TempText);
+				}
+
+				ModelShaders.push_back(TempShader);
+			}
+		}
 	}
 
 	m_Location = InitialLocation;
