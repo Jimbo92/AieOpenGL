@@ -19,6 +19,8 @@
 
 #include <Light.h>
 
+#include <ParticleEmitter.h>
+
 class Camera;
 
 class GeometryApp : public BaseApplication
@@ -69,5 +71,6 @@ private:
 
 	Model* mdl_Sponza;
 
+	ParticleEmitter* m_testEmitter;
 };
 

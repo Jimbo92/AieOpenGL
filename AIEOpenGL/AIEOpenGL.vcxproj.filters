@@ -57,6 +57,9 @@
     <ClCompile Include="src\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h">
@@ -98,6 +101,9 @@
     <ClInclude Include="dep\fbxloader\FBXFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\vshader.vert">
@@ -137,6 +143,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="data\Shaders\vs_animation.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\fs_particle.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\vs_particle.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

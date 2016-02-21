@@ -157,7 +157,7 @@ bool GeometryApp::startup()
 	//pyroGun_Shader->m_light = m_testLight;
 	//pyroGun_Shader->m_specpow = 1.5f;
 
-	mdl_Sponza = new Model("./data/characters/Enemytank/EnemyTank.fbx", 1, true, glm::vec3(0), glm::vec3(0.001, 0.001, 0.001));
+	mdl_Sponza = new Model("./data/characters/Marksman/Marksman.fbx", 1, true, glm::vec3(0), glm::vec3(0.001f, 0.001f, 0.001f));
 	mdl_Sponza->ModelShaders[0]->m_light = m_testLight;
 	//mdl_Sponza->ModelShaders.push_back(pyro_Shader);
 	//mdl_Sponza->ModelShaders.push_back(pyroGun_Shader);
@@ -171,6 +171,10 @@ bool GeometryApp::startup()
 	SwordModel = new Model("./data/soulspear/soulspear.fbx", 1, false, vec3(0, 5, 0));
 	SwordModel->ModelShaders[0]->m_light = m_testLight;
 	//SwordModel->ModelShaders.push_back(SwordShader);
+
+	m_testEmitter = new ParticleEmitter();
+	m_testEmitter->initalise(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
+	m_testEmitter->m_ParticleShader->m_light = m_testLight;
 
 
 	return true;
@@ -212,6 +216,8 @@ bool GeometryApp::update(float deltaTime)
 	SwordModel->m_RotAmount = sin(glfwGetTime());
 	//
 	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
+
+	m_testEmitter->update(deltaTime, m_camera->getTransform());
 
 	//generate the grid
 	//generateGrid(64, 64);
@@ -307,6 +313,8 @@ void GeometryApp::draw()
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	m_testEmitter->draw(m_camera);
+
 	//LucyModel->Draw(m_camera);
 	//BunnyModel->Draw(m_camera);
 	SwordModel->Draw(m_camera);
@@ -320,6 +328,8 @@ void GeometryApp::draw()
 	//mdl_PalmTree->Draw(m_camera);
 
 	mdl_Sponza->Draw(m_camera);
+
+
 
 
 	//glBindVertexArray(m_VAO);

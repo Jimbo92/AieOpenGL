@@ -47,7 +47,7 @@ Model::Model(const char* FilePath, unsigned int modeltype, bool isAnimated, glm:
 			if (!isAnimated)
 			{
 				Shader* TempShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag");
-
+				TempShader->m_Textures.clear();
 				TempShader->m_specpow = 1.5f;
 
 				for (unsigned int i = 0; i < m_FBXModel->getTextureCount(); i++)
@@ -61,7 +61,7 @@ Model::Model(const char* FilePath, unsigned int modeltype, bool isAnimated, glm:
 			else
 			{
 				Shader* TempShader = new Shader("./data/Shaders/vs_animation.vert", "./data/Shaders/fs_texture_norm_spec.frag");
-
+				TempShader->m_Textures.clear();
 				TempShader->m_specpow = 1.5f;
 
 				for (unsigned int i = 0; i < m_FBXModel->getTextureCount(); i++)

@@ -27,6 +27,7 @@
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\ParticleEmitter.cpp" />
     <ClCompile Include="src\Planet.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\TestApplication.cpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="src\gl_core_4_4.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\ParticleEmitter.h" />
     <ClInclude Include="src\Planet.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\TestApplication.h" />
@@ -52,6 +54,7 @@
     <None Include="data\fshader.frag" />
     <None Include="data\Shaders\fs_branch.frag" />
     <None Include="data\Shaders\fs_grass.frag" />
+    <None Include="data\Shaders\fs_particle.frag" />
     <None Include="data\Shaders\fs_texture.frag" />
     <None Include="data\Shaders\fs_texture_norm.frag" />
     <None Include="data\Shaders\fs_texture_norm_spec.frag" />
@@ -59,6 +62,7 @@
     <None Include="data\Shaders\vs_animation.vert" />
     <None Include="data\Shaders\vs_branch.vert" />
     <None Include="data\Shaders\vs_grass.vert" />
+    <None Include="data\Shaders\vs_particle.vert" />
     <None Include="data\Shaders\vs_texture.vert" />
     <None Include="data\Shaders\vs_texture_wave.vert" />
     <None Include="data\vshader.vert" />

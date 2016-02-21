@@ -8,6 +8,10 @@ Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Tex
 	m_textureNormal = NormalMap;
 	m_textureSpecmap = SpecMap;
 
+	m_Textures.push_back(TextureFile);
+	m_Textures.push_back(NormalMap);
+	m_Textures.push_back(SpecMap);
+
 	m_VertShader = LoadShader(VertexShaderPath);
 	m_FragShader = LoadShader(FragmentShaderPath);
 
