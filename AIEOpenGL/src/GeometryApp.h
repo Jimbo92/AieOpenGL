@@ -21,6 +21,8 @@
 
 #include <ParticleEmitter.h>
 
+#include <Terrain.h>
+
 class Camera;
 
 class GeometryApp : public BaseApplication
@@ -44,12 +46,7 @@ private:
 
 	unsigned int m_programID;
 
-	unsigned int m_VAO;
-	unsigned int m_VBO;
-	unsigned int m_IBO;
 
-	unsigned int m_rows = 20;
-	unsigned int m_cols = 20;
 
 	Shader vShader;
 
@@ -70,6 +67,8 @@ private:
 	Shader* WaterShader;
 
 	Model* mdl_Sponza;
+
+	Terrain* tr_TerrainTest;
 
 	ParticleEmitter* m_testEmitter;
 };

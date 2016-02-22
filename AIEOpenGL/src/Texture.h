@@ -9,7 +9,9 @@
 class Texture
 {
 public:
+	Texture(){}
 	Texture(const char* FilePath);
+	Texture(int imgWidth, int imgHeight, float* data);
 
 	unsigned int m_texture;
 

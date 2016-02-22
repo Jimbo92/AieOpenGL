@@ -4,6 +4,8 @@ using namespace std;
 
 Shader::Shader(const char *VertexShaderPath, const char *FragmentShaderPath, Texture* TextureFile, Texture* NormalMap, Texture* SpecMap)
 {
+	m_noisemap = nullptr;
+
 	m_textureFile = TextureFile;
 	m_textureNormal = NormalMap;
 	m_textureSpecmap = SpecMap;
@@ -111,6 +113,15 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	}
 	projectionViewUniform = glGetUniformLocation(m_programID, "specmap");
 	glUniform1i(projectionViewUniform, 2);
+
+	//Set Noise map
+	if (m_noisemap != nullptr)
+	{
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, m_noisemap->m_texture);
+	}
+	projectionViewUniform = glGetUniformLocation(m_programID, "noisemap");
+	glUniform1i(projectionViewUniform, 3);
 
 	unsigned int timeUniform = glGetUniformLocation(m_programID, "time");
 	glUniform1f(timeUniform, glfwGetTime());

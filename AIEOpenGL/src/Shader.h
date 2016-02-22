@@ -5,7 +5,6 @@
 
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
-
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -47,6 +46,7 @@ public:
 	Texture* m_textureFile;
 	Texture* m_textureNormal;
 	Texture* m_textureSpecmap;
+	Texture* m_noisemap = nullptr;
 
 	std::vector<Texture*> m_Textures;
 

@@ -198,8 +198,10 @@ void ParticleEmitter::update(float DeltaTime, const glm::mat4& a_cameraTransform
 
 void ParticleEmitter::draw(Camera* currentCamera)
 {
+	glDisable(GL_DEPTH_TEST);
+
 	//draw shader
-	m_ParticleShader->DrawShader(currentCamera, glm::vec3(cos(glfwGetTime()) * 5.f,1, sin(glfwGetTime()) * 5.f));
+	m_ParticleShader->DrawShader(currentCamera, glm::vec3(3, 1, 3));
 
 	//sync the particle vertex buffer
 	//based on how many alive particles there are
@@ -209,6 +211,8 @@ void ParticleEmitter::draw(Camera* currentCamera)
 	//draw particles
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 

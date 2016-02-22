@@ -7,6 +7,9 @@ in vec4 vPosition;
 out vec4 FragColor; 
 
 uniform sampler2D diffuse;
+uniform sampler2D normal;
+uniform sampler2D specmap;
+uniform sampler2D noisemap;
 uniform float time;
 
 vec2 nextTextCoord;
@@ -18,12 +21,12 @@ void main()
 { 
 	//flip y axis on texture coords to correct rotation
 	nextTextCoord = vTexCoord;
-	nextTextCoord.y += .5f;
-	nextTextCoord.x += .5f;
 
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
+	vec4 NoiseColor = texture(noisemap, nextTextCoord);
 
 	TextureColor *= vColor;
 
-	FragColor = TextureColor;
+	FragColor = NoiseColor.rrrr;
+	FragColor.a = 1;
 }

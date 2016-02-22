@@ -60,6 +60,9 @@
     <ClCompile Include="src\ParticleEmitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -149,6 +155,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="data\Shaders\vs_particle.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\fs_terrain.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="data\Shaders\vs_terrain.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
