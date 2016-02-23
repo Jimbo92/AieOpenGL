@@ -5,7 +5,8 @@
 Terrain::Terrain(Camera* camera)
 {
 	m_CurrentCamera = camera;
-	m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag");
+	Texture* TerrainGrass = new Texture("./data/grass.jpg");
+	m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass);
 }
 
 
@@ -14,10 +15,10 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	//generate perlin noise
 	int dims = cols;
 
-	int octaves = 8;
+	int octaves = 6;
 
 	perlin_data = new float[dims * dims];
-	float scale = (1.f / dims) * 3;
+	float scale = (1.f / dims) * 6;
 	for (int x = 0; x < dims; x++)
 	{
 		for (int y = 0; y < dims; y++)
@@ -45,12 +46,16 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	m_cols = cols;
 
 	Vertex* aoVertices = new Vertex[rows * cols];
+
+	normal_data = new float[rows * cols];
 	//generate displacement on cpu instead of vertex shader to calculate normals
 	for (unsigned int x = 0; x < rows; ++x)
 	{
 		for (unsigned int y = 0; y < cols; ++y)
 		{
-			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * 15.f, (float)y, 1);
+			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * 25.f, (float)y, 1);
+
+			//normal_data[x * cols + y];
 		}
 	}
 
@@ -62,9 +67,14 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 			glm::vec3 color2 = glm::vec3(sin((glfwGetTime() + aoVertices[r * cols + c].position.z) * 1.5f) * 1.f);
 
 			//aoVertices[r * cols + c].color = glm::vec4(color, 1) + glm::vec4(color2, 1);
-			aoVertices[r * cols + c].color = glm::vec4(1,1,1,1);
+			//aoVertices[r * cols + c].color = glm::vec4(1,1,1,1);
 
-			aoVertices[r * cols + c].TexCoord = glm::vec2((float)c / rows, (float)r / cols);
+			glm::vec3 U = glm::normalize(aoVertices[r * cols + c + 1].position.xyz - aoVertices[r * cols + c].position.xyz);
+			glm::vec3 V = glm::normalize(aoVertices[r + 1 * cols + c].position.xyz - aoVertices[r * cols + c].position.xyz);
+
+			aoVertices[r * cols + c].normal = glm::vec4(glm::normalize(glm::cross(U, V)), 1);
+
+			aoVertices[r * cols + c].TexCoord = glm::vec2((float)c / (rows * 0.1), (float)r / (cols * 0.1));
 		}
 	}
 
@@ -105,6 +115,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)0) + 16);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)0) + 32);

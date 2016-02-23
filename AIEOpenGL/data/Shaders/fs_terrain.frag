@@ -1,21 +1,41 @@
 #version 410
 
-in vec4 vColor;
 in vec2 vTexCoord; 
 in vec4 vPosition;
+in vec4 vNormal;
 
 out vec4 FragColor; 
 
 uniform sampler2D diffuse;
-uniform sampler2D normal;
-uniform sampler2D specmap;
 uniform sampler2D noisemap;
 uniform float time;
+uniform vec3 lightdirection;
+uniform vec3 lightposition;
+uniform vec4 lightcolor;
+uniform vec3 ambient = vec3(0.15f, 0.15f, 0.15f);
+uniform float lightrange = 100.f;
 
 vec2 nextTextCoord;
 
 float alpha = 1.0f;
 
+vec4 calcpointlight(vec4 TextureColor, vec3 normal, vec3 worldPos, vec3 lightPos, vec4 color)
+{
+	vec3 delta = lightPos - worldPos;
+	vec3 lightDir = normalize(delta);
+
+	float distance = length(delta);
+
+	float attenuation = (lightrange - distance) / lightrange;
+	attenuation = clamp(attenuation, 0, 1);
+	attenuation = pow(attenuation, 2);
+
+	float lambert = clamp(dot(normal, lightDir), 0, 1);
+
+	vec4 endValue;
+	endValue = TextureColor * color * lambert * attenuation;
+	return endValue;
+}
 
 void main() 
 { 
@@ -25,8 +45,17 @@ void main()
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
 	vec4 NoiseColor = texture(noisemap, nextTextCoord);
 
-	TextureColor *= vColor;
+	//FragColor = NoiseColor.rrrr;
+	//FragColor.a = 1;
 
-	FragColor = NoiseColor.rrrr;
-	FragColor.a = 1;
+	vec4 amb = vec4(ambient * TextureColor.xyz, 1);
+
+	vec4 pointLight = calcpointlight(NoiseColor.rrrr, vNormal.xyz, vPosition.xyz, vec3(0, 5, 0), vec4(1, 1, 1, 1));
+
+	float d = 0;
+	d = max(0, dot(vNormal.rrr, vec3(0.5, 1, 0)));
+
+	TextureColor.rgb *= d;
+
+	FragColor = TextureColor + amb;
 }

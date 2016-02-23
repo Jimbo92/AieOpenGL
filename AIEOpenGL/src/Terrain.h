@@ -11,7 +11,7 @@
 struct Vertex
 {
 	glm::vec4 position;
-	glm::vec4 color;
+	glm::vec4 normal;
 	glm::vec2 TexCoord;
 };
 
@@ -34,6 +34,8 @@ public:
 	unsigned int m_cols = 20;
 
 	float* perlin_data;
+
+	float* normal_data;
 
 	void generateGrid(unsigned int rows, unsigned int cols);
 

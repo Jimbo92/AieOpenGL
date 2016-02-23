@@ -172,7 +172,8 @@ bool GeometryApp::startup()
 	m_testEmitter->m_ParticleShader->m_light = m_testLight;
 
 	tr_TerrainTest = new Terrain(m_camera);
-	tr_TerrainTest->generateGrid(128, 128);
+	tr_TerrainTest->generateGrid(512, 512);
+	tr_TerrainTest->m_TerrainShader->m_light = m_testLight;
 
 	return true;
 }
