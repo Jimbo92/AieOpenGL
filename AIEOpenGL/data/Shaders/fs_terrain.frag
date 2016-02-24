@@ -12,8 +12,8 @@ uniform float time;
 uniform vec3 lightdirection;
 uniform vec3 lightposition;
 uniform vec4 lightcolor;
-uniform vec3 ambient = vec3(0.15f, 0.15f, 0.15f);
-uniform float lightrange = 100.f;
+uniform vec3 ambient = vec3(0.05f, 0.05f, 0.05f);
+uniform float lightrange = 512.f;
 
 vec2 nextTextCoord;
 
@@ -50,10 +50,10 @@ void main()
 
 	vec4 amb = vec4(ambient * TextureColor.xyz, 1);
 
-	vec4 pointLight = calcpointlight(NoiseColor.rrrr, vNormal.xyz, vPosition.xyz, vec3(0, 5, 0), vec4(1, 1, 1, 1));
+	vec4 pointLight = calcpointlight(TextureColor, vNormal.rgb, vPosition.xyz, vec3(sin(time) * 100.f, cos(time) * 100.f, 0), vec4(1, 1, 1, 1));
 
 	float d = 0;
-	d = max(0, dot(vNormal.rrr, vec3(0.5, 1, 0)));
+	d = max(0, dot(vNormal.rgb, vec3(sin(time * 0.5f), cos(time * 0.5f), 0)));
 
 	TextureColor.rgb *= d;
 

@@ -5,13 +5,62 @@
 Terrain::Terrain(Camera* camera)
 {
 	m_CurrentCamera = camera;
-	Texture* TerrainGrass = new Texture("./data/grass.jpg");
-	m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass);
 }
 
+void Terrain::generateGrid()
+{
+	m_TerrainShader = new Shader("./data/Shaders/vs_rendertarget.vert", "./data/Shaders/fs_rendertarget.frag");
+
+	float vertexData[] = 
+	{
+		-5, 0, -5, 1, 0, 0,
+		5, 0, -5, 1, 1, 0,
+		5, 10, -5, 1, 1, 1,
+		-5, 10, -5, 1, 0, 1,
+	};
+	unsigned int indexData[] = 
+	{
+		0, 1, 2,
+		0, 2, 3,
+	};
+
+	//Generates GL Buffers
+	//Generate them together
+	glGenBuffers(1, &m_VBO);
+	glGenBuffers(1, &m_IBO);
+
+	//Add the following to generate a VertexArrayObject
+	glGenVertexArrays(1, &m_VAO);
+	glBindVertexArray(m_VAO);
+
+	//create and bind buffers to a vertex array object
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, vertexData, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, ((char*)0) + 16);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indexData, GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+	//delete[] vertexData;
+	//delete[] indexData;
+}
 
 void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 {
+	Texture* TerrainGrass = new Texture("./data/grass.jpg");
+	m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass);
+
 	//generate perlin noise
 	int dims = cols;
 
@@ -47,7 +96,6 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 
 	Vertex* aoVertices = new Vertex[rows * cols];
 
-	normal_data = new float[rows * cols];
 	//generate displacement on cpu instead of vertex shader to calculate normals
 	for (unsigned int x = 0; x < rows; ++x)
 	{
@@ -59,6 +107,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 		}
 	}
 
+	//calc texture coords
 	for (unsigned int r = 0; r < rows; ++r)
 	{
 		for (unsigned int c = 0; c < cols; ++c)
@@ -69,12 +118,19 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 			//aoVertices[r * cols + c].color = glm::vec4(color, 1) + glm::vec4(color2, 1);
 			//aoVertices[r * cols + c].color = glm::vec4(1,1,1,1);
 
-			glm::vec3 U = glm::normalize(aoVertices[r * cols + c + 1].position.xyz - aoVertices[r * cols + c].position.xyz);
-			glm::vec3 V = glm::normalize(aoVertices[r + 1 * cols + c].position.xyz - aoVertices[r * cols + c].position.xyz);
-
-			aoVertices[r * cols + c].normal = glm::vec4(glm::normalize(glm::cross(U, V)), 1);
-
 			aoVertices[r * cols + c].TexCoord = glm::vec2((float)c / (rows * 0.1), (float)r / (cols * 0.1));
+		}
+	}
+
+	//calc normals
+	for (unsigned int r = 0; r < rows - 1; ++r)
+	{
+		for (unsigned int c = 0; c < cols - 1; ++c)
+		{
+			glm::vec3 U = glm::normalize(aoVertices[r * cols + (c + 1)].position.xyz - aoVertices[r * cols + c].position.xyz);
+			glm::vec3 V = glm::normalize(aoVertices[(r + 1) * cols + c].position.xyz - aoVertices[r * cols + c].position.xyz);
+
+			aoVertices[r * cols + c].normal = glm::vec4(glm::normalize(glm::cross(U, V)), 0);
 		}
 	}
 
@@ -117,7 +173,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	glEnableVertexAttribArray(2);
 
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)0) + 16);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), ((char*)0) + 16);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)0) + 32);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -141,6 +197,14 @@ void Terrain::Draw()
 	glBindVertexArray(m_VAO);
 	unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+}
+
+void Terrain::DrawSingle()
+{
+	m_TerrainShader->DrawShader(m_CurrentCamera, glm::vec3(0, 5, 0));
+
+	glBindVertexArray(m_VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
 Terrain::~Terrain()

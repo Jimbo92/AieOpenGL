@@ -48,6 +48,8 @@ public:
 	Texture* m_textureSpecmap;
 	Texture* m_noisemap = nullptr;
 
+	unsigned int m_rendertargetTexture;
+
 	std::vector<Texture*> m_Textures;
 
 	float m_alpha = 1.f;

@@ -43,6 +43,37 @@ bool GeometryApp::startup()
 
 	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
 
+	//=================================//Render Target//====================================//
+
+	//setup frambuffer
+	glGenFramebuffers(1, &m_fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+	//render target
+	glGenTextures(1, &m_fboTexture);
+	glBindTexture(GL_TEXTURE_2D, m_fboTexture);
+
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 512, 512);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_fboTexture, 0);
+
+	//depth buffer
+	glGenRenderbuffers(1, &m_fboDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_fboDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_fboDepth);
+
+	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
+	glDrawBuffers(1, drawBuffers);
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer Error!" << std::endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	//===================//Load OBJ models//==============================//
 	
 	/*
@@ -152,24 +183,24 @@ bool GeometryApp::startup()
 	//pyroGun_Shader->m_light = m_testLight;
 	//pyroGun_Shader->m_specpow = 1.5f;
 
+
+
+
+	
 	mdl_Sponza = new Model("./data/characters/Marksman/Marksman.fbx", 1, true, glm::vec3(0), glm::vec3(0.003f, 0.003f, 0.003f));
 	mdl_Sponza->ModelShaders[0]->m_light = m_testLight;
-	//mdl_Sponza->ModelShaders.push_back(pyro_Shader);
-	//mdl_Sponza->ModelShaders.push_back(pyroGun_Shader);
 
-	//Texture* SwordTexture = new Texture("./data/soulspear/soulspear_diffuse.tga");
-	//Texture* SwordTexture_N = new Texture("./data/soulspear/soulspear_normal.tga");
-	//Texture* SwordTexture_Spec = new Texture("./data/soulspear/soulspear_specular.tga");
-	//Shader* SwordShader = new Shader("./data/Shaders/vs_texture.vert", "./data/Shaders/fs_texture_norm_spec.frag", SwordTexture, SwordTexture_N, SwordTexture_Spec);
-	//SwordShader->m_light = m_testLight;
-	//SwordShader->m_specpow = 5.5f;
 	SwordModel = new Model("./data/soulspear/soulspear.fbx", 1, false, vec3(0, 5, 0));
 	SwordModel->ModelShaders[0]->m_light = m_testLight;
-	//SwordModel->ModelShaders.push_back(SwordShader);
 
 	m_testEmitter = new ParticleEmitter();
 	m_testEmitter->initalise(500, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 1, 1, 1), glm::vec4(1, 0, 0, 1));
 	m_testEmitter->m_ParticleShader->m_light = m_testLight;
+	
+
+	m_renderTarget = new Terrain(m_camera);
+	m_renderTarget->generateGrid();
+	m_renderTarget->m_TerrainShader->m_rendertargetTexture = m_fboTexture;
 
 	tr_TerrainTest = new Terrain(m_camera);
 	tr_TerrainTest->generateGrid(512, 512);
@@ -177,7 +208,6 @@ bool GeometryApp::startup()
 
 	return true;
 }
-
 
 
 void GeometryApp::shutdown()
@@ -214,7 +244,7 @@ bool GeometryApp::update(float deltaTime)
 	SwordModel->m_RotAmount = sin(glfwGetTime());
 	//
 	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
-
+	
 	m_testEmitter->update(deltaTime, m_camera->getTransform());
 
 	//generate the grid
@@ -222,14 +252,14 @@ bool GeometryApp::update(float deltaTime)
 
 	
 	// ...for now let's add a grid to the gizmos
-	//for (int i = 0; i < 21; ++i) 
-	//{
-	//	Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
-	//		i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-	//
-	//	Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
-	//		i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-	//}
+	for (int i = 0; i < 21; ++i) 
+	{
+		Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
+			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
+	
+		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
+			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
+	}
 	
 
 
@@ -240,28 +270,21 @@ bool GeometryApp::update(float deltaTime)
 
 void GeometryApp::draw()
 {
+	//setup fbo render
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	glViewport(0, 0, 512, 512);
+
+	glClearColor(0.75f, 0.75f, 0.75f, 1);
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	tr_TerrainTest->Draw();
 
-	//LucyModel->Draw(m_camera);
-	//BunnyModel->Draw(m_camera);
 	SwordModel->Draw(m_camera);
-
-	//WaterModelTest->Draw(m_camera);
-
-	//mdl_GrassChunk1->Draw(m_camera);
-	//mdl_GrassChunk2->Draw(m_camera);
-	//mdl_GrassChunk3->Draw(m_camera);
-
-	//mdl_PalmTree->Draw(m_camera);
 
 	m_testEmitter->draw(m_camera);
 
 	mdl_Sponza->Draw(m_camera);
-
-
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());
@@ -272,6 +295,26 @@ void GeometryApp::draw()
 	mat4 guiMatrix = glm::ortho<float>(0, 0, (float)width, (float)height);
 
 	Gizmos::draw2D(m_camera->getProjectionView());
+
+
+	//return render screen
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, 1280, 720);
+
+	glClearColor(0.25f, 0.25f, 0.25f, 1);
+	// clear the screen for this frame
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_renderTarget->DrawSingle();
+
+	tr_TerrainTest->Draw();
+
+	SwordModel->Draw(m_camera);
+
+	m_testEmitter->draw(m_camera);
+
+	mdl_Sponza->Draw(m_camera);
+
 }
 
 

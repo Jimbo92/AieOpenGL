@@ -37,8 +37,6 @@ public:
 	virtual bool update(float deltaTime);
 	virtual void draw();
 
-	void generateGrid(unsigned int rows, unsigned int cols);
-
 
 private:
 	Camera*		m_camera;
@@ -70,6 +68,12 @@ private:
 
 	Terrain* tr_TerrainTest;
 
+	Terrain* m_renderTarget;
+
 	ParticleEmitter* m_testEmitter;
+
+	unsigned int m_fbo;
+	unsigned int m_fboTexture;
+	unsigned int m_fboDepth;
 };
 

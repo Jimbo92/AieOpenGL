@@ -123,6 +123,12 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	projectionViewUniform = glGetUniformLocation(m_programID, "noisemap");
 	glUniform1i(projectionViewUniform, 3);
 
+	//RenderTarget map
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, m_rendertargetTexture);
+	unsigned int RenderTargetUniform = glGetUniformLocation(m_programID, "rendertargetmap");
+	glUniform1i(RenderTargetUniform, 4);
+
 	unsigned int timeUniform = glGetUniformLocation(m_programID, "time");
 	glUniform1f(timeUniform, glfwGetTime());
 

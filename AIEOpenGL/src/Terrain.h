@@ -35,10 +35,10 @@ public:
 
 	float* perlin_data;
 
-	float* normal_data;
-
+	void generateGrid();
 	void generateGrid(unsigned int rows, unsigned int cols);
 
 	void Draw();
+	void DrawSingle();
 };
 
