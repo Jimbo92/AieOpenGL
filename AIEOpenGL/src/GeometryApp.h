@@ -44,7 +44,11 @@ private:
 
 	unsigned int m_programID;
 
+	void GeneratePostProcessQuad();
 
+	unsigned int m_VAO_PPQ;
+	unsigned int m_VBO_PPQ;
+	unsigned int m_IBO_PPQ;
 
 	Shader vShader;
 
@@ -69,6 +73,8 @@ private:
 	Terrain* tr_TerrainTest;
 
 	Terrain* m_renderTarget;
+
+	Shader* m_postProcessShader;
 
 	ParticleEmitter* m_testEmitter;
 

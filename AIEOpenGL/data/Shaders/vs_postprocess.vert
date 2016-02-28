@@ -15,5 +15,5 @@ void main()
 	vPosition = Position;
 	vTexCoord = TexCoord;
 
-	gl_Position = ProjectionView * Position;
+	gl_Position = Position;
 }
