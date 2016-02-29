@@ -58,8 +58,9 @@ void Terrain::generateGrid()
 
 void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 {
-	Texture* TerrainGrass = new Texture("./data/grass.jpg");
-	m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass);
+	Texture* TerrainGrass = new Texture("./data/toontexture/sand.tga");
+	Texture* TerrainDirt = new Texture("./data/toontexture/dirt2.tga");
+	m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass, TerrainDirt);
 
 	//generate perlin noise
 	int dims = cols;
@@ -101,7 +102,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	{
 		for (unsigned int y = 0; y < cols; ++y)
 		{
-			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * 25.f, (float)y, 1);
+			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * 45.f, (float)y, 1);
 		}
 	}
 

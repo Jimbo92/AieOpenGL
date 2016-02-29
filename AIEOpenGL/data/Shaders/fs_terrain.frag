@@ -7,6 +7,7 @@ in vec4 vNormal;
 out vec4 FragColor; 
 
 uniform sampler2D diffuse;
+uniform sampler2D normal;
 uniform sampler2D noisemap;
 uniform float time;
 uniform vec3 lightdirection;
@@ -42,13 +43,12 @@ void main()
 	//flip y axis on texture coords to correct rotation
 	nextTextCoord = vTexCoord;
 
-	vec4 TextureColor = texture(diffuse, nextTextCoord);
+	vec4 TextureColor = texture(diffuse, nextTextCoord * 4);
+	vec4 TextureColor2 = texture(normal, nextTextCoord * 4);
 	vec4 NoiseColor = texture(noisemap, nextTextCoord * 0.1f);
 
 	//FragColor = NoiseColor.rrrr;
 	//FragColor.a = 1;
-
-	vec4 amb = vec4(ambient * TextureColor.xyz, 1);
 
 	vec4 pointLight = calcpointlight(TextureColor, vNormal.rgb, vPosition.xyz, vec3(sin(time) * 100.f, cos(time) * 100.f, 0), vec4(1, 1, 1, 1));
 
@@ -59,5 +59,9 @@ void main()
 	
 	vec4 invert = vec4(1-NoiseColor.r, 0, 0, 1);
 
-	FragColor = vec4(NoiseColor.r * TextureColor.rgb + invert.r * vec3(0,0,1), 1);
+	vec4 EndColor = vec4(NoiseColor.r * TextureColor2.rgb + invert.r * TextureColor.rgb, 1);
+
+	vec4 amb = vec4(ambient * EndColor.rgb, 1);
+
+	FragColor = vec4((EndColor.rgb * d) + amb.rgb, 1);
 }
