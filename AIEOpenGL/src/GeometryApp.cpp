@@ -45,6 +45,7 @@ bool GeometryApp::startup()
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
 	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
+
 	//=================================//Render Target//====================================//
 
 	//setup frambuffer

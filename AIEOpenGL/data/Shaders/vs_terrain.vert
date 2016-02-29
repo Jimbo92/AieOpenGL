@@ -12,6 +12,9 @@ out vec4 vNormal;
 uniform mat4 ProjectionView;
 uniform vec3 lightposition;
 uniform float time;
+uniform sampler2D grass;
+uniform sampler2D dirt;
+uniform sampler2D cliff;
 uniform sampler2D noisemap;
 
 uniform float terrainScaleWeight = 25.f;

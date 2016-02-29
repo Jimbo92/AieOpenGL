@@ -102,8 +102,6 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 		for (unsigned int y = 0; y < cols; ++y)
 		{
 			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * 25.f, (float)y, 1);
-
-			//normal_data[x * cols + y];
 		}
 	}
 
@@ -114,9 +112,6 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 		{
 			glm::vec3 color = glm::vec3((float)sin((glfwGetTime() + aoVertices[r * cols + c].position.x) * 1.5f) * 1.f);
 			glm::vec3 color2 = glm::vec3((float)sin((glfwGetTime() + aoVertices[r * cols + c].position.z) * 1.5f) * 1.f);
-
-			//aoVertices[r * cols + c].color = glm::vec4(color, 1) + glm::vec4(color2, 1);
-			//aoVertices[r * cols + c].color = glm::vec4(1,1,1,1);
 
 			aoVertices[r * cols + c].TexCoord = glm::vec2((float)c / (rows * 0.1), (float)r / (cols * 0.1));
 		}

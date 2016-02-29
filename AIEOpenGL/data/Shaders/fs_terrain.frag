@@ -43,7 +43,7 @@ void main()
 	nextTextCoord = vTexCoord;
 
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
-	vec4 NoiseColor = texture(noisemap, nextTextCoord);
+	vec4 NoiseColor = texture(noisemap, nextTextCoord * 0.1f);
 
 	//FragColor = NoiseColor.rrrr;
 	//FragColor.a = 1;
@@ -55,7 +55,9 @@ void main()
 	float d = 0;
 	d = max(0, dot(vNormal.rgb, vec3(sin(time * 0.25f), cos(time * 0.25f), 0)));
 
-	TextureColor.rgb *= d;
+	//TextureColor.rgb *= d;
+	
+	vec4 invert = vec4(1-NoiseColor.r, 0, 0, 1);
 
-	FragColor = TextureColor + amb;
+	FragColor = vec4(NoiseColor.r * TextureColor.rgb + invert.r * vec3(0,0,1), 1);
 }
