@@ -130,7 +130,7 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	glUniform1i(RenderTargetUniform, 4);
 
 	unsigned int timeUniform = glGetUniformLocation(m_programID, "time");
-	glUniform1f(timeUniform, glfwGetTime());
+	glUniform1f(timeUniform, (float)glfwGetTime());
 
 	unsigned int alphaUniform = glGetUniformLocation(m_programID, "alpha");
 	glUniform1f(alphaUniform, m_alpha);
@@ -161,7 +161,7 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	glUniform3f(ambientcolorUniform, m_ambientlight.r, m_ambientlight.g, m_ambientlight.b);
 
 	unsigned int heightScaleUniform = glGetUniformLocation(m_programID, "heightScale");
-	glUniform1f(heightScaleUniform, 1.1);
+	glUniform1f(heightScaleUniform, 1.1f);
 }
 
 std::string Shader::LoadShader(const char *filePath)

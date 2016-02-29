@@ -211,7 +211,7 @@ void Model::Update(float DeltaTime)
 	FBXAnimation* animation = m_FBXModel->getAnimationByIndex(0);
 
 	//evaluate the animation to update bones
-	skeleton->evaluate(animation, glfwGetTime());
+	skeleton->evaluate(animation, (float)glfwGetTime());
 
 	for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; bone_index++)
 	{
@@ -219,7 +219,7 @@ void Model::Update(float DeltaTime)
 	}
 
 	//update uniform within shader
-	for (int i = 0; i < ModelShaders.size(); i++)
+	for (unsigned int i = 0; i < ModelShaders.size(); i++)
 	{
 		ModelShaders[i]->UpdateBones(skeleton);
 	}

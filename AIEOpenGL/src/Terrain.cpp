@@ -112,8 +112,8 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	{
 		for (unsigned int c = 0; c < cols; ++c)
 		{
-			glm::vec3 color = glm::vec3(sin((glfwGetTime() + aoVertices[r * cols + c].position.x) * 1.5f) * 1.f);
-			glm::vec3 color2 = glm::vec3(sin((glfwGetTime() + aoVertices[r * cols + c].position.z) * 1.5f) * 1.f);
+			glm::vec3 color = glm::vec3((float)sin((glfwGetTime() + aoVertices[r * cols + c].position.x) * 1.5f) * 1.f);
+			glm::vec3 color2 = glm::vec3((float)sin((glfwGetTime() + aoVertices[r * cols + c].position.z) * 1.5f) * 1.f);
 
 			//aoVertices[r * cols + c].color = glm::vec4(color, 1) + glm::vec4(color2, 1);
 			//aoVertices[r * cols + c].color = glm::vec4(1,1,1,1);

@@ -184,7 +184,10 @@ void ParticleEmitter::update(float DeltaTime, const glm::mat4& a_cameraTransform
 			glm::vec3 zAxis = glm::normalize(glm::vec3(a_cameraTransform[3]) - currParticle->position);
 			glm::vec3 xAxis = glm::cross(glm::vec3(a_cameraTransform[1]), zAxis);
 			glm::vec3 yAxis = glm::cross(zAxis, xAxis);
-			glm::mat4 billboard(glm::vec4(xAxis, 0), glm::vec4(yAxis, 0), glm::vec4(zAxis, 0), glm::vec4(0, 0, 0, 1));
+			glm::mat4 billboard(glm::vec4(xAxis, 0),
+				glm::vec4(yAxis, 0),
+				glm::vec4(zAxis, 0),
+				glm::vec4(0, 0, 0, 1));
 
 			for (unsigned int index = 0; index < 4; index++)
 			{
@@ -198,7 +201,7 @@ void ParticleEmitter::update(float DeltaTime, const glm::mat4& a_cameraTransform
 
 void ParticleEmitter::draw(Camera* currentCamera)
 {
-	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
 
 	//draw shader
 	m_ParticleShader->DrawShader(currentCamera, glm::vec3(3, 1, 3));
@@ -212,7 +215,7 @@ void ParticleEmitter::draw(Camera* currentCamera)
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
 
-	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
 }
 
 

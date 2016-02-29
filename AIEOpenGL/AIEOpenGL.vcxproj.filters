@@ -110,6 +110,9 @@
     <ClInclude Include="src\Terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dep\AntTweakBar\include\AntTweakBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\vshader.vert">

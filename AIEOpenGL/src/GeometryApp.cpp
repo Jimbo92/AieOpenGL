@@ -27,6 +27,9 @@ GeometryApp::~GeometryApp()
 	delete LucyModel;
 	delete BunnyModel;
 	delete mdl_Sponza;
+
+	TwDeleteAllBars();
+	TwTerminate();
 }
 
 bool GeometryApp::startup()
@@ -42,7 +45,6 @@ bool GeometryApp::startup()
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
 	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
-
 	//=================================//Render Target//====================================//
 
 	//setup frambuffer
@@ -187,9 +189,6 @@ bool GeometryApp::startup()
 	//pyroGun_Shader->m_specpow = 1.5f;
 
 
-
-
-	
 	mdl_Sponza = new Model("./data/characters/Marksman/Marksman.fbx", 1, true, glm::vec3(0), glm::vec3(0.003f, 0.003f, 0.003f));
 	mdl_Sponza->ModelShaders[0]->m_light = m_testLight;
 
@@ -205,6 +204,22 @@ bool GeometryApp::startup()
 	tr_TerrainTest->m_TerrainShader->m_light = m_testLight;
 
 	GeneratePostProcessQuad();
+
+
+	//tweakbar
+	TwInit(TW_OPENGL_CORE, nullptr);
+	TwWindowSize(1280, 720);
+
+	glfwSetMouseButtonCallback(m_window, OnMouseButton);
+	glfwSetCursorPosCallback(m_window, OnMousePosition);
+	glfwSetScrollCallback(m_window, OnMouseScroll);
+	glfwSetKeyCallback(m_window, OnKey);
+	glfwSetCharCallback(m_window, OnChar);
+	glfwSetWindowSizeCallback(m_window, OnWindowResize);
+
+	m_bar = TwNewBar("Settings");
+	TwAddVarRW(m_bar, "Clear Color", TW_TYPE_COLOR4F, &m_ClearColor[0], "");
+	TwAddVarRW(m_bar, "Enable PostProcessing", TW_TYPE_BOOLCPP, &m_EnablePostProcess, "");
 
 	return true;
 }
@@ -277,9 +292,9 @@ bool GeometryApp::update(float deltaTime)
 	mdl_Sponza->Update(deltaTime);
 
 	SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
-	SwordModel->m_RotAmount = sin(glfwGetTime());
+	SwordModel->m_RotAmount = (float)sin(glfwGetTime());
 	//
-	SwordModel->m_Location.y = cos(glfwGetTime()) + 5;
+	SwordModel->m_Location.y = (float)cos(glfwGetTime()) + 5;
 	
 	m_testEmitter->update(deltaTime, m_camera->getTransform());
 
@@ -306,11 +321,20 @@ bool GeometryApp::update(float deltaTime)
 
 void GeometryApp::draw()
 {
-	//setup fbo render
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	glViewport(0, 0, 1280, 720);
+	if (m_EnablePostProcess)
+	{
+		//setup fbo render
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+		glViewport(0, 0, 1280, 720);
+	}
+	else
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, 1280, 720);
+	}
 
 	// clear the screen for this frame
+	glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	tr_TerrainTest->Draw();
@@ -331,20 +355,25 @@ void GeometryApp::draw()
 
 	Gizmos::draw2D(m_camera->getProjectionView());
 
+	if (m_EnablePostProcess)
+	{
+		//return render screen
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, 1280, 720);
 
-	//return render screen
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, 1280, 720);
+		// clear the screen for this frame
+		glClear(GL_DEPTH_BUFFER_BIT);
 
-	// clear the screen for this frame
-	glClear(GL_DEPTH_BUFFER_BIT);
+		//draw postprocess shader
+		m_postProcessShader->DrawShader(m_camera, glm::vec3(0));
 
-	//draw postprocess shader
-	m_postProcessShader->DrawShader(m_camera, glm::vec3(0));
+		//draw post process quad
+		glBindVertexArray(m_VAO_PPQ);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 
-	//draw post process quad
-	glBindVertexArray(m_VAO_PPQ);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	//draw tweak bars
+	TwDraw();
 }
 
 

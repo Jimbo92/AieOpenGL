@@ -1,5 +1,7 @@
 #pragma once
 
+#include <AntTweakBar.h>
+
 #include "BaseApplication.h"
 #include "Planet.h"
 #include <list>
@@ -81,5 +83,38 @@ private:
 	unsigned int m_fbo;
 	unsigned int m_fboTexture;
 	unsigned int m_fboDepth;
+
+	TwBar* m_bar;
+
+	//Tweak Bar funcs
+	static void OnMouseButton(GLFWwindow*, int b, int a, int m)
+	{
+		TwEventMouseButtonGLFW(b, a);
+	}
+	static void OnMousePosition(GLFWwindow*, double x, double y)
+	{
+		TwEventMousePosGLFW((int)x, (int)y);
+	}
+	static void OnMouseScroll(GLFWwindow*, double x, double y)
+	{
+		TwEventMouseWheelGLFW((int)y);
+	}
+	static void OnKey(GLFWwindow*, int k, int s, int a, int m)
+	{
+		TwEventKeyGLFW(k, a);
+	}
+	static void OnChar(GLFWwindow*, unsigned int c)
+	{
+		TwEventCharGLFW(c, GLFW_PRESS);
+	}
+	static void OnWindowResize(GLFWwindow*, int w, int h)
+	{
+		TwWindowSize(w, h);
+		glViewport(0, 0, w, h);
+	}
+
+	glm::vec4 m_ClearColor = glm::vec4(1, 1, 1, 1);
+
+	bool m_EnablePostProcess = false;
 };
 
