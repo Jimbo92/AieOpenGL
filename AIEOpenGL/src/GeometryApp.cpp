@@ -120,8 +120,9 @@ bool GeometryApp::startup()
 
 	//Terrain Shader Settings
 	TwAddVarRW(m_MainTweakBar, "Terrain Intensity", TW_TYPE_FLOAT, &tr_TerrainTest->m_TerrainIntensity, "group='Terrain Settings'");
-	TwAddVarRW(m_MainTweakBar, "SizeX", TW_TYPE_FLOAT, &tr_TerrainTest->m_TerrainIntensity, "group='Terrain Settings'");
-	TwAddVarRW(m_MainTweakBar, "SizeY", TW_TYPE_FLOAT, &tr_TerrainTest->m_TerrainIntensity, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "SizeCols", TW_TYPE_INT32, &tr_TerrainTest->m_cols, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "SizeRows", TW_TYPE_INT32, &tr_TerrainTest->m_rows, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "Scale", TW_TYPE_FLOAT, &tr_TerrainTest->m_scale, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "Refresh", TW_TYPE_BOOLCPP, &tr_TerrainTest->m_RefreshTerrain, "group='Terrain Settings'");
 
 	return true;

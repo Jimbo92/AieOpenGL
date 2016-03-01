@@ -44,5 +44,7 @@ public:
 	float m_TerrainIntensity = 45.f;
 
 	bool m_RefreshTerrain = false;
+
+	float m_scale = 0.5f;
 };
 

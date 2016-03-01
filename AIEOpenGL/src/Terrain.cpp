@@ -196,7 +196,7 @@ void Terrain::Draw()
 	}
 
 
-	m_TerrainShader->DrawShader(m_CurrentCamera, glm::vec3(-32, -15, -32), glm::vec3(0.5f, 0.5f, 0.5f));
+	m_TerrainShader->DrawShader(m_CurrentCamera, glm::vec3(-32, -15, -32), glm::vec3(m_scale, m_scale, m_scale));
 
 	glBindVertexArray(m_VAO);
 	unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;
