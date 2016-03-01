@@ -102,7 +102,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	{
 		for (unsigned int y = 0; y < cols; ++y)
 		{
-			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * 45.f, (float)y, 1);
+			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * m_TerrainIntensity, (float)y, 1);
 		}
 	}
 
@@ -188,6 +188,14 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 
 void Terrain::Draw()
 {
+	//ReGenerates the terrain if tweak changes
+	if (m_RefreshTerrain)
+	{
+		generateGrid(m_rows, m_cols);
+		m_RefreshTerrain = false;
+	}
+
+
 	m_TerrainShader->DrawShader(m_CurrentCamera, glm::vec3(-32, -15, -32), glm::vec3(0.5f, 0.5f, 0.5f));
 
 	glBindVertexArray(m_VAO);

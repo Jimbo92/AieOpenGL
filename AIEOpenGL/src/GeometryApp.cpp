@@ -99,7 +99,7 @@ bool GeometryApp::startup()
 	GeneratePostProcessQuad();
 
 
-	//tweakbar
+	//============================================//AntTweakBar//==========================================//
 	TwInit(TW_OPENGL_CORE, nullptr);
 	TwWindowSize(1280, 720);
 
@@ -110,9 +110,19 @@ bool GeometryApp::startup()
 	glfwSetCharCallback(m_window, OnChar);
 	glfwSetWindowSizeCallback(m_window, OnWindowResize);
 
-	m_bar = TwNewBar("Settings");
-	TwAddVarRW(m_bar, "Clear Color", TW_TYPE_COLOR4F, &m_ClearColor[0], "");
-	TwAddVarRW(m_bar, "Enable PostProcessing", TW_TYPE_BOOLCPP, &m_EnablePostProcess, "");
+	m_MainTweakBar = TwNewBar("Settings");
+	TwAddVarRW(m_MainTweakBar, "Clear Color", TW_TYPE_COLOR4F, &m_ClearColor[0], "");
+	TwAddVarRW(m_MainTweakBar, "Enable PostProcessing", TW_TYPE_BOOLCPP, &m_EnablePostProcess, "");
+
+	//tweak bar camera settings
+	TwAddVarRW(m_MainTweakBar, "Camera Speed", TW_TYPE_FLOAT, &m_camera->m_speed, "group='Camera Settings'");
+
+
+	//Terrain Shader Settings
+	TwAddVarRW(m_MainTweakBar, "Terrain Intensity", TW_TYPE_FLOAT, &tr_TerrainTest->m_TerrainIntensity, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "SizeX", TW_TYPE_FLOAT, &tr_TerrainTest->m_TerrainIntensity, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "SizeY", TW_TYPE_FLOAT, &tr_TerrainTest->m_TerrainIntensity, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "Refresh", TW_TYPE_BOOLCPP, &tr_TerrainTest->m_RefreshTerrain, "group='Terrain Settings'");
 
 	return true;
 }

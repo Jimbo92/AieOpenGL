@@ -29,9 +29,11 @@ public:
 	// the plane has a normal of XYZ and is offset from (0,0,0) by -W in the direction of the normal
 	glm::vec3			pickAgainstPlane(float x, float y, const glm::vec4& plane) const;
 
+	float		m_speed;
+
 private:
 	
-	float		m_speed;
+
 	glm::vec3	m_up;
 	glm::mat4	m_transform;
 	glm::mat4	m_projection;

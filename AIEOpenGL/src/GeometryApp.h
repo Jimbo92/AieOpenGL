@@ -84,7 +84,9 @@ private:
 	unsigned int m_fboTexture;
 	unsigned int m_fboDepth;
 
-	TwBar* m_bar;
+	TwBar* m_MainTweakBar;
+
+	
 
 	//Tweak Bar funcs
 	static void OnMouseButton(GLFWwindow*, int b, int a, int m)
