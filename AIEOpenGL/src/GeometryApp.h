@@ -1,29 +1,23 @@
 #pragma once
 
 #include <AntTweakBar.h>
-
 #include "BaseApplication.h"
 #include "Planet.h"
 #include <list>
-
 #include <Model.h>
 
 // only needed for the camera picking
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
-
 #include <Shader.h>
 #include <tiny_obj_loader.h>
 #include <Texture.h>
-
 #include <glm\gtc\quaternion.hpp>
 #include <glm\gtx\quaternion.hpp>
-
 #include <Light.h>
-
 #include <ParticleEmitter.h>
-
 #include <Terrain.h>
+#include <BoundingObj.h>
 
 class Camera;
 
@@ -51,6 +45,8 @@ private:
 	unsigned int m_VAO_PPQ;
 	unsigned int m_VBO_PPQ;
 	unsigned int m_IBO_PPQ;
+
+	BoundingObj m_testSphere;
 
 	Shader vShader;
 

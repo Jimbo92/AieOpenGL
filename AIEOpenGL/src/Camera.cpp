@@ -23,6 +23,52 @@ void Camera::setPerspective(float fovY, float aspectRatio, float near, float far
 	m_projectionView = m_projection * m_view;
 }
 
+void Camera::getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes)
+{
+	//right side
+	planes[0] = glm::vec4(transform[0][3] - transform[0][0],
+						  transform[1][3] - transform[1][0],
+						  transform[2][3] - transform[2][0],
+						  transform[3][3] - transform[3][0]);
+
+	//left side
+	planes[1] = glm::vec4(transform[0][3] + transform[0][0],
+						  transform[1][3] + transform[1][0],
+						  transform[2][3] + transform[2][0],
+						  transform[3][3] + transform[3][0]);
+
+	//top side
+	planes[2] = glm::vec4(transform[0][3] - transform[0][1],
+						  transform[1][3] - transform[1][1],
+						  transform[2][3] - transform[2][1],
+						  transform[3][3] - transform[3][1]);
+
+	//bottom side
+	planes[3] = glm::vec4(transform[0][3] + transform[0][1],
+						  transform[1][3] + transform[1][1],
+						  transform[2][3] + transform[2][1],
+						  transform[3][3] + transform[3][1]);
+
+	//far side
+	planes[4] = glm::vec4(transform[0][3] - transform[0][2],
+						  transform[1][3] - transform[1][2],
+						  transform[2][3] - transform[2][2],
+						  transform[3][3] - transform[3][2]);
+
+	//near side
+	planes[4] = glm::vec4(transform[0][3] + transform[0][2],
+						  transform[1][3] + transform[1][2],
+						  transform[2][3] + transform[2][2],
+						  transform[3][3] + transform[3][2]);
+
+	//normalize
+	for (int i = 0; i < 6; i++)
+	{
+		//planes[i].xyz = glm::normalize(planes[i].xyz);
+		//planes[i].w = glm::normalize(planes[i].w);
+	}
+}
+
 void Camera::setLookAtFrom(const glm::vec3& from, const glm::vec3& to)
 {
 	m_view = glm::lookAt(from, to, glm::vec3(0, 1, 0));

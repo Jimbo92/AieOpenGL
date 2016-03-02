@@ -46,6 +46,12 @@ bool GeometryApp::startup()
 
 	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
 
+
+	//=================================//Sphere Bounding Test//=============================//
+	m_testSphere = BoundingObj(glm::vec3(0, 0, 0), 0.5f);
+
+
+
 	//=================================//Render Target//====================================//
 
 	//setup frambuffer
@@ -190,6 +196,29 @@ bool GeometryApp::update(float deltaTime)
 	// clear the gizmos out for this frame
 	Gizmos::clear();
 
+	//=================================//Sphere Bounding Test//=============================//
+	vec4 plane(0, 1, 0, -1);
+
+	m_testSphere.m_Sphere.m_center.y = cosf((float)glfwGetTime()) + 5;
+	
+	float d = glm::dot(glm::vec3(plane), m_testSphere.m_Sphere.m_center) + plane.w;
+
+	Gizmos::addSphere(m_testSphere.m_Sphere.m_center, m_testSphere.m_Sphere.m_radius, 8, 8, Color_Blue);
+
+	glm::vec4 m_planeColor = Color_Blue;
+	if (d > m_testSphere.m_Sphere.m_radius)
+	{
+		std::cout << "front" << std::endl;
+		m_planeColor = Color_Green;
+	}
+	else if (d < -m_testSphere.m_Sphere.m_radius)
+	{
+		std::cout << "back" << std::endl;
+		m_planeColor = Color_Red;
+	}
+
+	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(-4, 1, -4), glm::vec3(-4, 1, 4), m_planeColor);	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(4, 1, -4), glm::vec3(-4, 1, -4), m_planeColor);
+	//=====================================================================================//
 
 	m_testLight->m_lightPos = glm::vec3(cos(glfwGetTime()) * 25.f, 0, sin(glfwGetTime()) * 25.f);
 
@@ -236,13 +265,13 @@ void GeometryApp::draw()
 	glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	tr_TerrainTest->Draw();
-
-	SwordModel->Draw(m_camera);
-
-	m_testEmitter->draw(m_camera);
-
-	mdl_Sponza->Draw(m_camera);
+	//tr_TerrainTest->Draw();
+	//
+	//SwordModel->Draw(m_camera);
+	//
+	//m_testEmitter->draw(m_camera);
+	//
+	//mdl_Sponza->Draw(m_camera);
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());

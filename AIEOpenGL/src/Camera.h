@@ -31,6 +31,8 @@ public:
 
 	float		m_speed;
 
+	void getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes);
+
 private:
 	
 
