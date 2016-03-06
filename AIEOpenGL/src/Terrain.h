@@ -41,7 +41,7 @@ public:
 	void Draw();
 	void DrawSingle();
 
-	float m_TerrainIntensity = 45.f;
+	float m_TerrainIntensity = 1.f;
 
 	bool m_RefreshTerrain = false;
 

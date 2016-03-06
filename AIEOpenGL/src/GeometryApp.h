@@ -111,8 +111,12 @@ private:
 		glViewport(0, 0, w, h);
 	}
 
-	glm::vec4 m_ClearColor = glm::vec4(1, 1, 1, 1);
+	glm::vec4 m_ClearColor = glm::vec4(0.25f, 0.25f, 0.25f, 1);
 
 	bool m_EnablePostProcess = false;
+
+	glm::vec4 m_planeColor = Color_Blue;
+
+	glm::vec4 planes[6];
 };
 

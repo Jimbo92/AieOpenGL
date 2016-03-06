@@ -48,12 +48,10 @@ bool GeometryApp::startup()
 
 
 	//=================================//Sphere Bounding Test//=============================//
-	m_testSphere = BoundingObj(glm::vec3(0, 0, 0), 0.5f);
-
+	m_testSphere = BoundingObj(glm::vec3(0, 1, 0), 0.5f);
 
 
 	//=================================//Render Target//====================================//
-
 	//setup frambuffer
 	glGenFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -86,7 +84,7 @@ bool GeometryApp::startup()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	//===================//Load OBJ models//==============================//
+	//=======================================//Load OBJ models//========================================//
 
 	mdl_Sponza = new Model("./data/characters/Marksman/Marksman.fbx", 1, true, glm::vec3(0), glm::vec3(0.003f, 0.003f, 0.003f));
 	mdl_Sponza->ModelShaders[0]->m_light = m_testLight;
@@ -170,7 +168,6 @@ void GeometryApp::GeneratePostProcessQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-
 void GeometryApp::shutdown()
 {
 	// delete our camera and cleanup gizmos
@@ -199,35 +196,40 @@ bool GeometryApp::update(float deltaTime)
 	//=================================//Sphere Bounding Test//=============================//
 	vec4 plane(0, 1, 0, -1);
 
-	m_testSphere.m_Sphere.m_center.y = cosf((float)glfwGetTime()) + 5;
-	
+	m_camera->getFrustumPlanes(m_camera->getProjectionView(), planes);
+
+	m_testSphere.m_Sphere.m_center.y = cosf((float)glfwGetTime()) + 1;
+
 	float d = glm::dot(glm::vec3(plane), m_testSphere.m_Sphere.m_center) + plane.w;
-
+	
 	Gizmos::addSphere(m_testSphere.m_Sphere.m_center, m_testSphere.m_Sphere.m_radius, 8, 8, Color_Blue);
-
-	glm::vec4 m_planeColor = Color_Blue;
+	
+	SwordModel->m_Location = m_testSphere.m_Sphere.m_center;
+	
 	if (d > m_testSphere.m_Sphere.m_radius)
 	{
-		std::cout << "front" << std::endl;
+		//std::cout << "front" << std::endl;
 		m_planeColor = Color_Green;
 	}
 	else if (d < -m_testSphere.m_Sphere.m_radius)
 	{
-		std::cout << "back" << std::endl;
+		//std::cout << "back" << std::endl;
 		m_planeColor = Color_Red;
 	}
 
-	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(-4, 1, -4), glm::vec3(-4, 1, 4), m_planeColor);	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(4, 1, -4), glm::vec3(-4, 1, -4), m_planeColor);
+	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(-4, 1, -4), glm::vec3(-4, 1, 4), m_planeColor);
+	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(4, 1, -4), glm::vec3(-4, 1, -4), m_planeColor);
+
 	//=====================================================================================//
 
 	m_testLight->m_lightPos = glm::vec3(cos(glfwGetTime()) * 25.f, 0, sin(glfwGetTime()) * 25.f);
 
 	mdl_Sponza->Update(deltaTime);
 
-	SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
-	SwordModel->m_RotAmount = (float)sin(glfwGetTime());
+	//SwordModel->m_RotAxis = glm::vec3(0, 1, 0);
+	//SwordModel->m_RotAmount = (float)sin(glfwGetTime());
 	//
-	SwordModel->m_Location.y = (float)cos(glfwGetTime()) + 5;
+	//SwordModel->m_Location.y = (float)cos(glfwGetTime()) + 5;
 	
 	m_testEmitter->update(deltaTime, m_camera->getTransform());
 
@@ -250,8 +252,6 @@ bool GeometryApp::update(float deltaTime)
 	return true;
 }
 
-
-
 void GeometryApp::draw()
 {
 	if (m_EnablePostProcess)
@@ -265,13 +265,33 @@ void GeometryApp::draw()
 	glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//tr_TerrainTest->Draw();
-	//
-	//SwordModel->Draw(m_camera);
-	//
-	//m_testEmitter->draw(m_camera);
-	//
-	//mdl_Sponza->Draw(m_camera);
+	tr_TerrainTest->Draw();
+
+	for (int i = 0; i < 6; i++)
+	{
+		float d = glm::dot(glm::vec3(planes[i]), m_testSphere.m_Sphere.m_center) + planes[i].w;
+
+		if (d < -m_testSphere.m_Sphere.m_radius)
+		{
+			std::cout << "Behind, don't render it!" << std::endl;
+			break;
+		}
+		else if (d < m_testSphere.m_Sphere.m_radius)
+		{
+			std::cout << "Touching, we still need to render it!" << std::endl;
+			SwordModel->Draw(m_camera);
+		}
+		else
+		{
+			std::cout << "Front, fully visible so render it!" << std::endl;
+			SwordModel->Draw(m_camera);
+		}
+
+	}
+
+	m_testEmitter->draw(m_camera);
+	mdl_Sponza->Draw(m_camera);
+
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());

@@ -56,7 +56,7 @@ void Camera::getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes)
 						  transform[3][3] - transform[3][2]);
 
 	//near side
-	planes[4] = glm::vec4(transform[0][3] + transform[0][2],
+	planes[5] = glm::vec4(transform[0][3] + transform[0][2],
 						  transform[1][3] + transform[1][2],
 						  transform[2][3] + transform[2][2],
 						  transform[3][3] + transform[3][2]);
@@ -64,8 +64,10 @@ void Camera::getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes)
 	//normalize
 	for (int i = 0; i < 6; i++)
 	{
-		//planes[i].xyz = glm::normalize(planes[i].xyz);
-		//planes[i].w = glm::normalize(planes[i].w);
+		glm::vec3 Pos = glm::vec3(planes[i].x, planes[i].y, planes[i].z);
+		planes[i].xyz = glm::normalize(Pos);
+		float W = planes[i].w;
+		planes[i].w = glm::normalize(W);
 	}
 }
 

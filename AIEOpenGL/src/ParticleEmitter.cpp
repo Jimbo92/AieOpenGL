@@ -201,6 +201,8 @@ void ParticleEmitter::update(float DeltaTime, const glm::mat4& a_cameraTransform
 
 void ParticleEmitter::draw(Camera* currentCamera)
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
 
 	//draw shader
@@ -216,6 +218,7 @@ void ParticleEmitter::draw(Camera* currentCamera)
 	glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
 
 	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 }
 
 

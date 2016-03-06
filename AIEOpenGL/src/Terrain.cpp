@@ -4,6 +4,8 @@
 
 Terrain::Terrain(Camera* camera)
 {
+	srand(time(NULL));
+
 	m_CurrentCamera = camera;
 }
 
@@ -69,6 +71,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 
 	perlin_data = new float[dims * dims];
 	float scale = (1.f / dims) * 6;
+	float Seed = rand();
 	for (int x = 0; x < dims; x++)
 	{
 		for (int y = 0; y < dims; y++)
@@ -80,7 +83,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 			for (int o = 0; o < octaves; o++)
 			{
 				float freq = powf(2, (float)o);
-				float perlin_sample = glm::perlin(glm::vec2(x, y) * scale * freq) * 0.5f + 0.5f;
+				float perlin_sample = glm::perlin(glm::vec2(x + Seed, y + Seed) * scale * freq) * 0.5f + 0.5f;
 				perlin_data[y * dims + x] += perlin_sample * amplitude;
 				amplitude *= persistence;
 			}
@@ -102,7 +105,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	{
 		for (unsigned int y = 0; y < cols; ++y)
 		{
-			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * m_TerrainIntensity, (float)y, 1);
+			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * (rows * 0.2f) * m_TerrainIntensity, (float)y, 1);
 		}
 	}
 

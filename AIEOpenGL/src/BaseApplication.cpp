@@ -29,12 +29,12 @@ bool BaseApplication::createWindow(const char* title, int width, int height) {
 	auto minor = ogl_GetMinorVersion();
 	std::cout << "GL: " << major << "." << minor << std::endl;
 
-	glClearColor(.25, .25, .25, 1);
+	//glClearColor(.25, .25, .25, 1);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	//glEnable(GL_BLEND);
 	//glEnable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	
