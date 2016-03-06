@@ -20,6 +20,9 @@
 #include <Shader.h>
 #include <FBXFile.h>
 
+#include <BoundingObj.h>
+#include <Gizmos.h>
+
 
 
 struct OpenGLInfo
@@ -68,6 +71,10 @@ public:
 	void CleanUpFBX(FBXFile* fbx);
 
 	FBXFile* m_FBXModel = nullptr;
+
+	std::string ModelPath;
+
+	BoundingObj Bounds;
 
 private:
 

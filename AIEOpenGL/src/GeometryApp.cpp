@@ -196,25 +196,25 @@ bool GeometryApp::update(float deltaTime)
 	//=================================//Sphere Bounding Test//=============================//
 	vec4 plane(0, 1, 0, -1);
 
-	m_camera->getFrustumPlanes(m_camera->getProjectionView(), planes);
-
 	m_testSphere.m_Sphere.m_center.y = cosf((float)glfwGetTime()) + 1;
 
 	float d = glm::dot(glm::vec3(plane), m_testSphere.m_Sphere.m_center) + plane.w;
 	
 	Gizmos::addSphere(m_testSphere.m_Sphere.m_center, m_testSphere.m_Sphere.m_radius, 8, 8, Color_Blue);
 	
-	SwordModel->m_Location = m_testSphere.m_Sphere.m_center;
-	
 	if (d > m_testSphere.m_Sphere.m_radius)
 	{
 		//std::cout << "front" << std::endl;
-		m_planeColor = Color_Green;
+		m_planeColor = Color_Red;
 	}
 	else if (d < -m_testSphere.m_Sphere.m_radius)
 	{
 		//std::cout << "back" << std::endl;
 		m_planeColor = Color_Red;
+	}
+	else
+	{
+		m_planeColor = Color_Green;
 	}
 
 	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(-4, 1, -4), glm::vec3(-4, 1, 4), m_planeColor);
@@ -267,27 +267,7 @@ void GeometryApp::draw()
 
 	tr_TerrainTest->Draw();
 
-	for (int i = 0; i < 6; i++)
-	{
-		float d = glm::dot(glm::vec3(planes[i]), m_testSphere.m_Sphere.m_center) + planes[i].w;
-
-		if (d < -m_testSphere.m_Sphere.m_radius)
-		{
-			std::cout << "Behind, don't render it!" << std::endl;
-			break;
-		}
-		else if (d < m_testSphere.m_Sphere.m_radius)
-		{
-			std::cout << "Touching, we still need to render it!" << std::endl;
-			SwordModel->Draw(m_camera);
-		}
-		else
-		{
-			std::cout << "Front, fully visible so render it!" << std::endl;
-			SwordModel->Draw(m_camera);
-		}
-
-	}
+	SwordModel->Draw(m_camera);
 
 	m_testEmitter->draw(m_camera);
 	mdl_Sponza->Draw(m_camera);

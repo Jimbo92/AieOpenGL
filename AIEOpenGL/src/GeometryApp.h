@@ -116,7 +116,5 @@ private:
 	bool m_EnablePostProcess = false;
 
 	glm::vec4 m_planeColor = Color_Blue;
-
-	glm::vec4 planes[6];
 };
 

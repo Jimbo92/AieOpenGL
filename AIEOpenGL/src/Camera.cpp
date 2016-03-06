@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>
+#include <iostream>
 
 Camera::Camera(float fovY, float aspectRatio, float near, float far)
 	: m_speed(10),
@@ -64,10 +65,37 @@ void Camera::getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes)
 	//normalize
 	for (int i = 0; i < 6; i++)
 	{
-		glm::vec3 Pos = glm::vec3(planes[i].x, planes[i].y, planes[i].z);
+		glm::vec3 Pos = planes[i].xyz;
 		planes[i].xyz = glm::normalize(Pos);
 		float W = planes[i].w;
 		planes[i].w = glm::normalize(W);
+	}
+}
+
+bool Camera::checkFrustum(std::string name, glm::vec3 center, float radius, glm::vec4* planes)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		float d = glm::dot(glm::vec3(planes[i]), center) + planes[i].w;
+
+		if (d < -radius)
+		{
+			if (!doOnce1)
+			{
+				std::cout << "Not Rendering" << ": " << name << std::endl << std::endl;
+				doOnce1 = true;
+				doOnce2 = false;
+			}
+			return false;
+		}
+
+		if (!doOnce2)
+		{
+			std::cout << "Rendering" << ": " << name << std::endl << std::endl;
+			doOnce2 = true;
+			doOnce1 = false;
+		}
+			return true;
 	}
 }
 

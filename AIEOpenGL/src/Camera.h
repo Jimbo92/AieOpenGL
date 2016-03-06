@@ -2,6 +2,7 @@
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+#include <string>
 
 class Camera {
 public:
@@ -33,6 +34,8 @@ public:
 
 	void getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes);
 
+	bool checkFrustum(std::string name, glm::vec3 center, float radius, glm::vec4* planes);
+
 private:
 	
 
@@ -41,4 +44,7 @@ private:
 	glm::mat4	m_projection;
 	glm::mat4	m_view;
 	glm::mat4	m_projectionView;
+
+	bool doOnce1 = false;
+	bool doOnce2 = false;
 };

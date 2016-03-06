@@ -42,6 +42,8 @@ Model::Model(const char* FilePath, unsigned int modeltype, bool isAnimated, glm:
 		m_FBXModel->load(FilePath);
 		CreateFBX(m_FBXModel);
 
+		ModelPath = FilePath;
+
 		for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); i++)
 		{
 			if (!isAnimated)
@@ -95,6 +97,14 @@ void Model::CreateFBX(FBXFile* fbx)
 
 		FBXMeshNode* mesh = fbx->getMeshByIndex(meshIndex);
 		auto vertexData = mesh->m_vertices;
+
+		//Setup Bounds
+		std::vector<glm::vec3> vPoints;
+		for (unsigned  i = 0; i < mesh->m_vertices.size(); ++i)
+		{
+			vPoints.push_back(mesh->m_vertices[i].position.xyz);
+		}
+		Bounds.fit(vPoints);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_gl_info[meshIndex].m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(FBXVertex), vertexData.data(), GL_STATIC_DRAW);
@@ -223,6 +233,8 @@ void Model::Update(float DeltaTime)
 	{
 		ModelShaders[i]->UpdateBones(skeleton);
 	}
+
+	Bounds.m_Sphere.m_center = m_Location;
 }
 
 void Model::Draw(Camera* camera)
@@ -249,6 +261,14 @@ void Model::Draw(Camera* camera)
 	//}
 	//else //Draw OBJ
 	//{
+
+	Gizmos::addSphere(Bounds.m_Sphere.m_center, 0.5f, 8, 8, Color_Blue);
+
+	glm::vec4 fplanes[6];
+	camera->getFrustumPlanes(camera->getProjectionView(), fplanes);
+
+	if (camera->checkFrustum(ModelPath, Bounds.m_Sphere.m_center, 0.5f, fplanes))
+	{
 		for (unsigned int i = 0; i < m_gl_info.size(); ++i)
 		{
 			ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
@@ -256,9 +276,9 @@ void Model::Draw(Camera* camera)
 			glBindVertexArray(m_gl_info[i].m_VAO);
 			glDrawElements(GL_TRIANGLES, m_gl_info[i].m_index_count, GL_UNSIGNED_INT, 0);
 		}
+	}
 	//}
 }
-
 
 Model::~Model()
 {
