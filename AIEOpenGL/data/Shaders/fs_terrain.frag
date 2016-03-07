@@ -50,10 +50,10 @@ void main()
 	//FragColor = NoiseColor.rrrr;
 	//FragColor.a = 1;
 
-	vec4 pointLight = calcpointlight(TextureColor, vNormal.rgb, vPosition.xyz, vec3(sin(time) * 100.f, cos(time) * 100.f, 0), vec4(1, 1, 1, 1));
+	vec4 pointLight = calcpointlight(TextureColor, vNormal.rgb, vPosition.xyz, vec3(20, 20, 20), vec4(1, 1, 1, 1));
 
 	float d = 0;
-	d = max(0, dot(vNormal.rgb, vec3(sin(time * 0.25f), cos(time * 0.25f), 0)));
+	d = max(0, dot(vNormal.rgb, lightdirection));
 
 	//TextureColor.rgb *= d;
 	

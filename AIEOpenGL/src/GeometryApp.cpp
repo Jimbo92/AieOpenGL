@@ -98,7 +98,6 @@ bool GeometryApp::startup()
 
 	tr_TerrainTest = new Terrain(m_camera);
 	tr_TerrainTest->generateGrid(512, 512);
-	tr_TerrainTest->m_TerrainShader->m_light = m_testLight;
 
 	GeneratePostProcessQuad();
 
@@ -128,6 +127,10 @@ bool GeometryApp::startup()
 	TwAddVarRW(m_MainTweakBar, "SizeRows", TW_TYPE_INT32, &tr_TerrainTest->m_rows, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "Scale", TW_TYPE_FLOAT, &tr_TerrainTest->m_scale, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "Refresh", TW_TYPE_BOOLCPP, &tr_TerrainTest->m_RefreshTerrain, "group='Terrain Settings'");
+
+	//Light
+	TwAddVarRW(m_MainTweakBar, "Light Direction", TW_TYPE_DIR3F, &m_testLight->m_lightDir, "group='Light Settings'");
+	//TwAddVarRW(m_MainTweakBar, "Light Color", TW_TYPE_COLOR3F, &m_testLight->m_lightColor, "group='Light Settings'");
 
 	return true;
 }
@@ -221,6 +224,8 @@ bool GeometryApp::update(float deltaTime)
 	Gizmos::addTri(glm::vec3(4, 1, 4), glm::vec3(4, 1, -4), glm::vec3(-4, 1, -4), m_planeColor);
 
 	//=====================================================================================//
+
+	tr_TerrainTest->m_TerrainShader->m_light = m_testLight;
 
 	m_testLight->m_lightPos = glm::vec3(cos(glfwGetTime()) * 25.f, 0, sin(glfwGetTime()) * 25.f);
 
