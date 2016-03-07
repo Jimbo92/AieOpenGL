@@ -86,10 +86,10 @@ bool GeometryApp::startup()
 
 	//=======================================//Load OBJ models//========================================//
 
-	mdl_Sponza = new Model("./data/characters/Marksman/Marksman.fbx", 1, true, glm::vec3(0), glm::vec3(0.003f, 0.003f, 0.003f));
+	mdl_Sponza = new Model(m_camera, "./data/characters/Marksman/Marksman.fbx", 1, true, glm::vec3(-10, 0, -5), glm::vec3(0.003f, 0.003f, 0.003f));
 	mdl_Sponza->ModelShaders[0]->m_light = m_testLight;
 
-	SwordModel = new Model("./data/soulspear/soulspear.fbx", 1, false, vec3(0, 5, 0));
+	SwordModel = new Model(m_camera, "./data/soulspear/soulspear.fbx", 1, false, vec3(-5, 5, 0));
 	SwordModel->ModelShaders[0]->m_light = m_testLight;
 
 	m_testEmitter = new ParticleEmitter();
@@ -267,10 +267,11 @@ void GeometryApp::draw()
 
 	tr_TerrainTest->Draw();
 
-	SwordModel->Draw(m_camera);
+	SwordModel->Draw();
 
 	m_testEmitter->draw(m_camera);
-	mdl_Sponza->Draw(m_camera);
+
+	mdl_Sponza->Draw();
 
 
 	// display the 3D gizmos

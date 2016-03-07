@@ -36,7 +36,7 @@ struct OpenGLInfo
 class Model
 {
 public:
-	Model(const char* Filepath, unsigned int modeltype = 0, bool isAnimated = false, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
+	Model(Camera* camera, const char* Filepath, unsigned int modeltype = 0, bool isAnimated = false, glm::vec3 InitialLocation = glm::vec3(0), glm::vec3 InitialScale = glm::vec3(1));
 	~Model();
 
 	void createOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes);
@@ -55,9 +55,10 @@ public:
 
 	float m_RotAmount = 0;
 
-	void Draw(Camera* camera);
+	void Draw();
 	void Update(float DeltaTime);
 
+	Camera* m_camera;
 
 	std::vector<Shader*> ModelShaders;
 
@@ -75,6 +76,8 @@ public:
 	std::string ModelPath;
 
 	BoundingObj Bounds;
+
+	glm::vec4 fplanes[6];
 
 private:
 

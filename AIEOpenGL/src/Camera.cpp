@@ -5,7 +5,7 @@
 #include <iostream>
 
 Camera::Camera(float fovY, float aspectRatio, float near, float far)
-	: m_speed(10),
+	: m_speed(50),
 	m_up(0,1,0),
 	m_transform(1),
 	m_view(1)
@@ -65,10 +65,14 @@ void Camera::getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes)
 	//normalize
 	for (int i = 0; i < 6; i++)
 	{
-		glm::vec3 Pos = planes[i].xyz;
-		planes[i].xyz = glm::normalize(Pos);
-		float W = planes[i].w;
-		planes[i].w = glm::normalize(W);
+		//didnt work??
+		//glm::vec3 Pos = planes[i].xyz;
+		//planes[i].xyz = glm::normalize(Pos);	
+		//float W = planes[i].w;
+		//planes[i].w = glm::normalize(W);
+
+		//Better
+		planes[i] = glm::normalize(planes[i]);
 	}
 }
 
@@ -80,23 +84,14 @@ bool Camera::checkFrustum(std::string name, glm::vec3 center, float radius, glm:
 
 		if (d < -radius)
 		{
-			if (!doOnce1)
-			{
-				std::cout << "Not Rendering" << ": " << name << std::endl << std::endl;
-				doOnce1 = true;
-				doOnce2 = false;
-			}
+			std::cout << "Not Rendering" << ": " << name << std::endl << std::endl;
 			return false;
 		}
-
-		if (!doOnce2)
-		{
-			std::cout << "Rendering" << ": " << name << std::endl << std::endl;
-			doOnce2 = true;
-			doOnce1 = false;
-		}
-			return true;
+		std::cout << "Rendering" << ": " << name << std::endl << std::endl;
+		return true;
 	}
+
+	return false;
 }
 
 void Camera::setLookAtFrom(const glm::vec3& from, const glm::vec3& to)

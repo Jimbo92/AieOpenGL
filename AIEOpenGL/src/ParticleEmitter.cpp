@@ -206,7 +206,7 @@ void ParticleEmitter::draw(Camera* currentCamera)
 	glDepthMask(GL_FALSE);
 
 	//draw shader
-	m_ParticleShader->DrawShader(currentCamera, glm::vec3(3, 1, 3));
+	m_ParticleShader->DrawShader(currentCamera, glm::vec3(5, 5, 5));
 
 	//sync the particle vertex buffer
 	//based on how many alive particles there are

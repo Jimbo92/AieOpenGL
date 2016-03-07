@@ -2,7 +2,7 @@
 
 
 
-Model::Model(const char* FilePath, unsigned int modeltype, bool isAnimated, glm::vec3 InitialLocation, glm::vec3 InitialScale)
+Model::Model(Camera* camera, const char* FilePath, unsigned int modeltype, bool isAnimated, glm::vec3 InitialLocation, glm::vec3 InitialScale)
 {
 	if (modeltype == 0) //OBJ load
 	{
@@ -77,6 +77,7 @@ Model::Model(const char* FilePath, unsigned int modeltype, bool isAnimated, glm:
 		}
 	}
 
+	m_camera = camera;
 	m_Location = InitialLocation;
 	m_Scale = InitialScale;
 }
@@ -233,51 +234,26 @@ void Model::Update(float DeltaTime)
 	{
 		ModelShaders[i]->UpdateBones(skeleton);
 	}
-
-	Bounds.m_Sphere.m_center = m_Location;
 }
 
-void Model::Draw(Camera* camera)
+void Model::Draw()
 {
-	//if (ModelShader != nullptr)
-	//{
-	//	ModelShader->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
-	//}
-
-	//if (m_FBXModel != nullptr) //Draw FBX
-	//{
-	//	ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
-	//
-	//	for (unsigned int i = 0; i < m_FBXModel->getMeshCount(); i++)
-	//	{
-	//		FBXMeshNode* mesh = m_FBXModel->getMeshByIndex(i);
-	//
-	//		unsigned int* glData = (unsigned int*)mesh->m_userData;
-	//
-	//
-	//		glBindVertexArray(glData[0]);
-	//		glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
-	//	}
-	//}
-	//else //Draw OBJ
-	//{
+	Bounds.m_Sphere.m_center = m_Location;
 
 	Gizmos::addSphere(Bounds.m_Sphere.m_center, 0.5f, 8, 8, Color_Blue);
 
-	glm::vec4 fplanes[6];
-	camera->getFrustumPlanes(camera->getProjectionView(), fplanes);
+	m_camera->getFrustumPlanes(m_camera->getProjectionView(), fplanes);
 
-	if (camera->checkFrustum(ModelPath, Bounds.m_Sphere.m_center, 0.5f, fplanes))
+	if (m_camera->checkFrustum(ModelPath, Bounds.m_Sphere.m_center, 0.5f, fplanes))
 	{
 		for (unsigned int i = 0; i < m_gl_info.size(); ++i)
 		{
-			ModelShaders[0]->DrawShader(camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
+			ModelShaders[0]->DrawShader(m_camera, m_Location, m_Scale, m_RotAxis, m_RotAmount);
 
 			glBindVertexArray(m_gl_info[i].m_VAO);
 			glDrawElements(GL_TRIANGLES, m_gl_info[i].m_index_count, GL_UNSIGNED_INT, 0);
 		}
 	}
-	//}
 }
 
 Model::~Model()

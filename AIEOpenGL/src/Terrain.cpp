@@ -4,7 +4,7 @@
 
 Terrain::Terrain(Camera* camera)
 {
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 
 	m_CurrentCamera = camera;
 }
@@ -71,7 +71,7 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 
 	perlin_data = new float[dims * dims];
 	float scale = (1.f / dims) * 6;
-	float Seed = rand();
+	int Seed = rand();
 	for (int x = 0; x < dims; x++)
 	{
 		for (int y = 0; y < dims; y++)

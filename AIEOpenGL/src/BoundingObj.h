@@ -23,6 +23,8 @@ public:
 
 	Sphere m_Sphere;
 
+	glm::vec3 DummyCenter;
+
 	void fit(const std::vector<glm::vec3>& points);
 };
 
