@@ -36,9 +36,10 @@ public:
 
 	bool checkFrustum(std::string name, glm::vec3 center, float radius, glm::vec4* planes);
 
+	bool showRender = false;
+
 private:
 	
-
 	glm::vec3	m_up;
 	glm::mat4	m_transform;
 	glm::mat4	m_projection;

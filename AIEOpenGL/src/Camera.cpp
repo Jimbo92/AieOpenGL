@@ -65,14 +65,14 @@ void Camera::getFrustumPlanes(const glm::mat4& transform, glm::vec4* planes)
 	//normalize
 	for (int i = 0; i < 6; i++)
 	{
-		//didnt work??
+		//bad
 		//glm::vec3 Pos = planes[i].xyz;
 		//planes[i].xyz = glm::normalize(Pos);	
 		//float W = planes[i].w;
-		//planes[i].w = glm::normalize(W);
+		//planes[i] = glm::normalize(planes[i]);
 
 		//Better
-		planes[i] = glm::normalize(planes[i]);
+		planes[i] /= glm::length(glm::vec3(planes[i].xyz));
 	}
 }
 
@@ -84,14 +84,14 @@ bool Camera::checkFrustum(std::string name, glm::vec3 center, float radius, glm:
 
 		if (d < -radius)
 		{
-			std::cout << "Not Rendering" << ": " << name << std::endl << std::endl;
+			if (showRender)
+				std::cout << "Not Rendering" << ": " << name << std::endl << std::endl;
 			return false;
 		}
-		std::cout << "Rendering" << ": " << name << std::endl << std::endl;
-		return true;
 	}
-
-	return false;
+	if(showRender)
+		std::cout << "Rendering" << ": " << name << std::endl << std::endl;
+	return true;
 }
 
 void Camera::setLookAtFrom(const glm::vec3& from, const glm::vec3& to)

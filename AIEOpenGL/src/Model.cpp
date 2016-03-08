@@ -238,13 +238,14 @@ void Model::Update(float DeltaTime)
 
 void Model::Draw()
 {
-	Bounds.m_Sphere.m_center = m_Location;
+	glm::vec3 offset(0, Bounds.m_Sphere.m_radius * m_Scale.y, 0);
+	Bounds.m_Sphere.m_center = m_Location + offset;
 
-	Gizmos::addSphere(Bounds.m_Sphere.m_center, 0.5f, 8, 8, Color_Blue);
+	Gizmos::addSphere(Bounds.m_Sphere.m_center, Bounds.m_Sphere.m_radius * m_Scale.y, 8, 8, Color_Blue);
 
 	m_camera->getFrustumPlanes(m_camera->getProjectionView(), fplanes);
 
-	if (m_camera->checkFrustum(ModelPath, Bounds.m_Sphere.m_center, 0.5f, fplanes))
+	if (m_camera->checkFrustum(ModelPath, Bounds.m_Sphere.m_center, Bounds.m_Sphere.m_radius * m_Scale.y, fplanes))
 	{
 		for (unsigned int i = 0; i < m_gl_info.size(); ++i)
 		{

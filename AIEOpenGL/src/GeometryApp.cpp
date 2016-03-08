@@ -44,7 +44,7 @@ bool GeometryApp::startup()
 	m_camera = new Camera(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
-	m_testLight = new Light(glm::vec3(0, 1, 0), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
+	m_testLight = new Light(glm::vec3(1.f, 0.5f, 0.5f), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
 
 
 	//=================================//Sphere Bounding Test//=============================//
@@ -99,6 +99,20 @@ bool GeometryApp::startup()
 	tr_TerrainTest = new Terrain(m_camera);
 	tr_TerrainTest->generateGrid(512, 512);
 
+	m_WaterPlane = new Terrain(m_camera);
+	m_WaterPlane->generateGrid(512, 512, false);
+	m_WaterPlane->m_Location = glm::vec3(0, 35.f, 0);
+	m_WaterPlane->m_useAlpha = true;
+	Texture* WaterTexture = new Texture("./data/water/water_diffuse.jpg");
+	Texture* WaterTexture_N = new Texture("./data/water/water_normal.jpg");
+	Shader* WaterShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture_wave.frag", WaterTexture, WaterTexture_N);
+	WaterShader->m_light = m_testLight;
+	WaterShader->m_alpha = 0.75f;
+	WaterShader->m_specpow = 15.f;
+	WaterShader->m_ambientlight = glm::vec4(0.6f, 0.6f, 0.6f, 0.f);
+	m_WaterPlane->m_TerrainShader = WaterShader;
+
+
 	GeneratePostProcessQuad();
 
 
@@ -119,6 +133,7 @@ bool GeometryApp::startup()
 
 	//tweak bar camera settings
 	TwAddVarRW(m_MainTweakBar, "Camera Speed", TW_TYPE_FLOAT, &m_camera->m_speed, "group='Camera Settings'");
+	TwAddVarRW(m_MainTweakBar, "Show Frustum Render", TW_TYPE_BOOLCPP, &m_camera->showRender, "group='Camera Settings'");
 
 
 	//Terrain Shader Settings
@@ -128,9 +143,13 @@ bool GeometryApp::startup()
 	TwAddVarRW(m_MainTweakBar, "Scale", TW_TYPE_FLOAT, &tr_TerrainTest->m_scale, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "Refresh", TW_TYPE_BOOLCPP, &tr_TerrainTest->m_RefreshTerrain, "group='Terrain Settings'");
 
+	//water settings
+	TwAddVarRW(m_MainTweakBar, "Water Height", TW_TYPE_FLOAT, &m_WaterPlane->m_Location.y, "group='Water Settings'");
+
 	//Light
 	TwAddVarRW(m_MainTweakBar, "Light Direction", TW_TYPE_DIR3F, &m_testLight->m_lightDir, "group='Light Settings'");
 	//TwAddVarRW(m_MainTweakBar, "Light Color", TW_TYPE_COLOR3F, &m_testLight->m_lightColor, "group='Light Settings'");
+
 
 	return true;
 }
@@ -271,6 +290,8 @@ void GeometryApp::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	tr_TerrainTest->Draw();
+
+	m_WaterPlane->Draw();
 
 	SwordModel->Draw();
 

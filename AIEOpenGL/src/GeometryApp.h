@@ -72,6 +72,8 @@ private:
 
 	Terrain* m_renderTarget;
 
+	Terrain* m_WaterPlane;
+
 	Shader* m_postProcessShader;
 
 	ParticleEmitter* m_testEmitter;

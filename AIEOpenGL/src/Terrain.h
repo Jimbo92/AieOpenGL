@@ -36,7 +36,7 @@ public:
 	float* perlin_data;
 
 	void generateGrid();
-	void generateGrid(unsigned int rows, unsigned int cols);
+	void generateGrid(unsigned int rows, unsigned int cols, bool withPerlin = true);
 
 	void Draw();
 	void DrawSingle();
@@ -46,5 +46,9 @@ public:
 	bool m_RefreshTerrain = false;
 
 	float m_scale = 0.5f;
+
+	bool m_useAlpha = false;
+
+	glm::vec3 m_Location = glm::vec3(0);
 };
 

@@ -19,7 +19,7 @@ uniform float time;
 uniform vec3 camerapos;
 uniform float alpha;
 uniform float specpow;
-uniform vec3 ambient = vec3(0.25f, 0.25f, 0.25f);
+uniform vec3 ambient = vec3(0.0f, 0.0f, 1.0f);
 uniform float lightrange = 50.f;
 
 vec2 nextTextCoord;
@@ -43,19 +43,36 @@ vec4 calcpointlight(vec4 TextureColor, vec3 normal, vec3 worldPos, vec3 lightPos
 	return endValue;
 }
 
+vec4 BoxBlur(sampler2D inTexture)
+{
+	vec2 texel = 1.0f / textureSize(inTexture, 0).xy;
+
+	// 9-tap box kernel
+	vec4 colour = texture(inTexture, vTexCoord);
+	colour += texture(inTexture, vTexCoord + vec2(-texel.x, texel.y));
+	colour += texture(inTexture, vTexCoord + vec2(-texel.x, 0));
+	colour += texture(inTexture, vTexCoord + vec2(-texel.x, -texel.y));
+	colour += texture(inTexture, vTexCoord + vec2(0, texel.y));
+	colour += texture(inTexture, vTexCoord + vec2(0, -texel.y));
+	colour += texture(inTexture, vTexCoord + vec2(texel.x, texel.y));
+	colour += texture(inTexture, vTexCoord + vec2(texel.x, 0));
+	colour += texture(inTexture, vTexCoord + vec2(texel.x, -texel.y));
+	return colour / 9;
+}
+
 void main() 
 { 
-	//flip y axis on texture coords to correct rotation
-	nextTextCoord.x = vTexCoord.x + sin(time * 0.01f);
-	nextTextCoord.y = vTexCoord.y + cos(time * 0.01f) * -1;
 
-	nextTextCoord2.x = vTexCoord.x + sin(time * 0.01f) * -1;
-	nextTextCoord2.y = vTexCoord.y + cos(time * 0.01f);
+	nextTextCoord = vTexCoord;
+	//flip y axis on texture coords to correct rotation
+	nextTextCoord.x += sin(time * 0.1f + nextTextCoord.y  * 0.05f);
+	nextTextCoord.y += cos(time * 0.1f + nextTextCoord.x  * 0.05f) * -1;
+
+	nextTextCoord2.x = vTexCoord.x + sin(time * 0.05f) * -1;
+	nextTextCoord2.y = vTexCoord.y + cos(time * 0.05f);
 
 	vec4 TextureColor = texture(diffuse, nextTextCoord);
 	vec4 TextureColor2 = texture(diffuse, -nextTextCoord2);
-
-	
 
 	vec3 N = texture(normal, nextTextCoord).xyz * 2 - 1;
 
@@ -68,9 +85,7 @@ void main()
 	s = pow(s, specpow); //specpow
 
 	float d = 0;
-	d = max(0, dot(normalize(TBN * N), lightdirection));
-
-
+	d = max(0, dot(N, lightdirection));
 
 	vec4 FinalColor;
 	FinalColor = (TextureColor2 * TextureColor);
@@ -78,6 +93,12 @@ void main()
 	FinalColor.a *= alpha;
 
 	vec4 amb = vec4(ambient * TextureColor.xyz, 0);
+
+	vec2 texel = 1.0f / textureSize(diffuse, 0).xy;
+
+	FinalColor = FinalColor + amb;
+
+	FinalColor += vPosition.y;
 
 	FragColor = FinalColor;
 }

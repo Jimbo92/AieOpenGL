@@ -58,41 +58,44 @@ void Terrain::generateGrid()
 	//delete[] indexData;
 }
 
-void Terrain::generateGrid(unsigned int rows, unsigned int cols)
+void Terrain::generateGrid(unsigned int rows, unsigned int cols, bool withPerlin)
 {
-	Texture* TerrainGrass = new Texture("./data/toontexture/sand.tga");
-	Texture* TerrainDirt = new Texture("./data/toontexture/dirt2.tga");
-	m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass, TerrainDirt);
-
-	//generate perlin noise
 	int dims = cols;
 
-	int octaves = 6;
-
-	perlin_data = new float[dims * dims];
-	float scale = (1.f / dims) * 6;
-	int Seed = rand();
-	for (int x = 0; x < dims; x++)
+	if (withPerlin)
 	{
-		for (int y = 0; y < dims; y++)
-		{
-			float amplitude = 1.0f;
-			float persistence = 0.3f;
-			perlin_data[y * dims + x] = 0;
+		Texture* TerrainGrass = new Texture("./data/toontexture/sand.tga");
+		Texture* TerrainDirt = new Texture("./data/toontexture/dirt2.tga");
+		m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass, TerrainDirt);
 
-			for (int o = 0; o < octaves; o++)
+		//generate perlin noise
+		int octaves = 6;
+
+		perlin_data = new float[dims * dims];
+		float scale = (1.f / dims) * 6;
+		int Seed = rand();
+		for (int x = 0; x < dims; x++)
+		{
+			for (int y = 0; y < dims; y++)
 			{
-				float freq = powf(2, (float)o);
-				float perlin_sample = glm::perlin(glm::vec2(x + Seed, y + Seed) * scale * freq) * 0.5f + 0.5f;
-				perlin_data[y * dims + x] += perlin_sample * amplitude;
-				amplitude *= persistence;
+				float amplitude = 1.0f;
+				float persistence = 0.3f;
+				perlin_data[y * dims + x] = 0;
+
+				for (int o = 0; o < octaves; o++)
+				{
+					float freq = powf(2, (float)o);
+					float perlin_sample = glm::perlin(glm::vec2(x + Seed, y + Seed) * scale * freq) * 0.5f + 0.5f;
+					perlin_data[y * dims + x] += perlin_sample * amplitude;
+					amplitude *= persistence;
+				}
 			}
 		}
+		//Create texture with perlin data
+		m_TerrainNoise = new Texture(dims, dims, perlin_data);
+		//insert into shader
+		m_TerrainShader->m_noisemap = m_TerrainNoise;
 	}
-	//Create texture with perlin data
-	m_TerrainNoise = new Texture(dims, dims, perlin_data);
-	//insert into shader
-	m_TerrainShader->m_noisemap = m_TerrainNoise;
 
 	//generate terrian grid
 	m_rows = rows;
@@ -105,7 +108,14 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols)
 	{
 		for (unsigned int y = 0; y < cols; ++y)
 		{
-			aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * (rows * 0.2f) * m_TerrainIntensity, (float)y, 1);
+			if (withPerlin)
+			{
+				aoVertices[x * cols + y].position += glm::vec4((float)x, perlin_data[x * dims + y] * (rows * 0.2f) * m_TerrainIntensity, (float)y, 1);
+			}
+			else
+			{
+				aoVertices[x * cols + y].position = glm::vec4((float)x, 0, (float)y, 1);
+			}
 		}
 	}
 
@@ -198,12 +208,23 @@ void Terrain::Draw()
 		m_RefreshTerrain = false;
 	}
 
+	if (m_useAlpha)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+	}
 
-	m_TerrainShader->DrawShader(m_CurrentCamera, glm::vec3(-32, -15, -32), glm::vec3(m_scale, m_scale, m_scale));
+	m_TerrainShader->DrawShader(m_CurrentCamera, m_Location, glm::vec3(m_scale, m_scale, m_scale));
 
 	glBindVertexArray(m_VAO);
 	unsigned int indexCount = (m_rows - 1) * (m_cols - 1) * 6;
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+
+	if (m_useAlpha)
+	{
+		glDisable(GL_BLEND);
+	}
+
 }
 
 void Terrain::DrawSingle()
