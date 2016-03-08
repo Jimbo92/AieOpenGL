@@ -98,7 +98,7 @@ void main()
 
 	FinalColor = FinalColor + amb;
 
-	FinalColor += vPosition.y;
+	FinalColor += vPosition.y * 0.2f;
 
 	FragColor = FinalColor;
 }

@@ -24,12 +24,12 @@ void main()
 	vTexCoord = TexCoord;
 
 
-	vec3 N = texture(diffuse, vTexCoord).xyz;
+	vec3 N = texture(normal, TexCoord * 0.1f).xyz;
 
 	vec4 P = Position;
 	//wave pos
-	P.y += sin(time * 2.5f + (N.r * 15.f)) * 0.1f;
-	P.y += cos(time * 2.5f + (N.r * 15.f)) * 0.1f;
+	P.y += sin(time * 1.5f + (N.r * 35.f)) * 0.5f;
+	//P.y += cos(time * 1.5f + (N.r * 35.f)) * 0.5f;
 
 	vPosition = P;
 
