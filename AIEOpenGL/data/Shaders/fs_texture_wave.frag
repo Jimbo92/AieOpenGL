@@ -92,13 +92,15 @@ void main()
 	FinalColor.rgb = FinalColor.rgb * d + FinalColor.rgb * s;
 	FinalColor.a *= alpha;
 
+
 	vec4 amb = vec4(ambient * TextureColor.xyz, 0);
 
 	vec2 texel = 1.0f / textureSize(diffuse, 0).xy;
 
 	FinalColor = FinalColor + amb;
 
-	FinalColor += vPosition.y * 0.2f;
+	if (vPosition.y > 0)
+		FinalColor += vPosition.y * .75f;
 
 	FragColor = FinalColor;
 }

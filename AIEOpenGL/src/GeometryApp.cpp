@@ -107,8 +107,8 @@ bool GeometryApp::startup()
 	Texture* WaterTexture_N = new Texture("./data/water/water_normal.jpg");
 	Shader* WaterShader = new Shader("./data/Shaders/vs_texture_wave.vert", "./data/Shaders/fs_texture_wave.frag", WaterTexture, WaterTexture_N);
 	WaterShader->m_light = m_testLight;
-	WaterShader->m_alpha = 0.75f;
-	WaterShader->m_specpow = 15.f;
+	WaterShader->m_alpha = 0.5f;
+	WaterShader->m_specpow = 10.f;
 	WaterShader->m_ambientlight = glm::vec4(0.6f, 0.6f, 0.6f, 0.f);
 	m_WaterPlane->m_TerrainShader = WaterShader;
 
@@ -244,6 +244,7 @@ bool GeometryApp::update(float deltaTime)
 
 	//=====================================================================================//
 
+	tr_TerrainTest->m_TerrainShader->m_fogStart = m_WaterPlane->m_Location.y * 2;
 	tr_TerrainTest->m_TerrainShader->m_light = m_testLight;
 
 	m_testLight->m_lightPos = glm::vec3(cos(glfwGetTime()) * 25.f, 0, sin(glfwGetTime()) * 25.f);

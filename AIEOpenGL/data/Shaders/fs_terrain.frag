@@ -16,9 +16,36 @@ uniform vec4 lightcolor;
 uniform vec3 ambient = vec3(0.05f, 0.05f, 0.05f);
 uniform float lightrange = 512.f;
 
+//fog stuff
+int fogEquation = 0;
+uniform float fogStart = 70.f;
+float fogEnd = fogStart / 2;
+float fogDensity = .04f;
+vec4 fogColor = vec4(0.0f, 0.5f, 0.5f, 1.f);
+
 vec2 nextTextCoord;
 
 float alpha = 1.0f;
+
+float setupFog(float FogCoord)
+{
+	float result = 0.0f;
+	if (fogEquation == 0)
+	{
+	result = (fogEnd - FogCoord) / (fogEnd - fogStart);
+	}
+	else if (fogEquation == 1)
+	{
+	result = exp(-fogDensity * FogCoord);
+	}
+	else if (fogEquation == 2)
+	{
+	result = exp(-pow(fogDensity * FogCoord, 2.0));
+	}
+
+	result = 1.0 - clamp(result, 0.0, 1.0);
+	return result;
+}
 
 vec4 calcpointlight(vec4 TextureColor, vec3 normal, vec3 worldPos, vec3 lightPos, vec4 color)
 {
@@ -63,5 +90,8 @@ void main()
 
 	vec4 amb = vec4(ambient * EndColor.rgb, 1);
 
-	FragColor = vec4((EndColor.rgb * d) + amb.rgb, 1);
+	//fog
+	float fogCoord = abs(vPosition.x / vPosition.y);
+
+	FragColor = mix(vec4((EndColor.rgb * d) + amb.rgb, 1), fogColor, setupFog(vPosition.y));
 }

@@ -23,13 +23,16 @@ void main()
 	vBiTangent = cross(vNormal, vTangent);
 	vTexCoord = TexCoord;
 
+	vec2 NewCoords = TexCoord;
+	NewCoords.x += sin(time * 0.1f + NewCoords.y) * 0.05f;
+	NewCoords.y += (cos(time * 0.1f + NewCoords.x) * 0.05f) * -1;
 
-	vec3 N = texture(normal, TexCoord * 0.1f).xyz;
+	vec3 N = texture(normal, NewCoords).xyz;
 
 	vec4 P = Position;
 	//wave pos
-	P.y += sin(time * 1.5f + (N.r * 35.f)) * 0.5f;
-	//P.y += cos(time * 1.5f + (N.r * 35.f)) * 0.5f;
+	P.y += sin(time * 5.5f + (N.r * 85.f)) * 0.1f;
+	P.y += cos(time * 5.5f + (N.r * 85.f)) * 0.1f;
 
 	vPosition = P;
 

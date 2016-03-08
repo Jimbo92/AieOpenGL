@@ -138,6 +138,9 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	unsigned int specpowUniform = glGetUniformLocation(m_programID, "specpow");
 	glUniform1f(specpowUniform, m_specpow);
 
+	unsigned int fogstartUniform = glGetUniformLocation(m_programID, "fogStart");
+	glUniform1f(fogstartUniform, m_fogStart);
+
 	glm::vec4 camPos = CurrentCamera->getTransform()[3];
 	unsigned int cameraposUniform = glGetUniformLocation(m_programID, "camerapos");
 	glUniform3f(cameraposUniform, camPos.x, camPos.y, camPos.z);
