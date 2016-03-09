@@ -14,6 +14,7 @@ out vec4 vPosition;
 uniform mat4 ProjectionView;
 uniform sampler2D diffuse;
 uniform sampler2D normal;
+uniform sampler2D noisemap;
 uniform float time;
 
 void main() 

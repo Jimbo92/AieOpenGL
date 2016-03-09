@@ -10,6 +10,7 @@ in vec4 vPosition;
 
 out vec4 FragColor; 
 
+uniform sampler2D noisemap;
 uniform sampler2D diffuse; 
 uniform sampler2D normal;
 uniform vec3 lightposition;
@@ -101,6 +102,17 @@ void main()
 
 	if (vPosition.y > 0)
 		FinalColor += vPosition.y * .75f;
+
+	vec4 noise = texture(noisemap, vTexCoord * 0.1f);
+
+	vec4 NoisePos;
+
+	NoisePos.y += noise.r * (512.f * 0.2f);
+
+	//if (vPosition == NoisePos)
+	//{
+	//	FinalColor = vec4(1,1,1,1);
+	//}
 
 	FragColor = FinalColor;
 }

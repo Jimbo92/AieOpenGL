@@ -8,6 +8,7 @@ out vec4 vColor;
 out vec2 vTexCoord;
 out vec4 vPosition;
 out vec4 vNormal;
+out vec4 vEyePos;
 
 uniform mat4 ProjectionView;
 uniform vec3 lightposition;
@@ -26,8 +27,11 @@ void main()
 	vTexCoord = TexCoord;
 	vNormal = Normal;
 
+	vEyePos = ProjectionView * Position;
+
 	vec4 pos = Position;
 	//pos.y += texture(noisemap, TexCoord).r * terrainScaleWeight;
+
 
 
 	gl_Position = ProjectionView * pos;

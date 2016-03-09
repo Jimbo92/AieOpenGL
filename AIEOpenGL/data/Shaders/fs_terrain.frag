@@ -3,6 +3,7 @@
 in vec2 vTexCoord; 
 in vec4 vPosition;
 in vec4 vNormal;
+in vec4 vEyePos;
 
 out vec4 FragColor; 
 
@@ -91,7 +92,7 @@ void main()
 	vec4 amb = vec4(ambient * EndColor.rgb, 1);
 
 	//fog
-	float fogCoord = abs(vPosition.x / vPosition.y);
+	float fogCoord = abs(vEyePos.y / vEyePos.w);
 
 	FragColor = mix(vec4((EndColor.rgb * d) + amb.rgb, 1), fogColor, setupFog(vPosition.y));
 }

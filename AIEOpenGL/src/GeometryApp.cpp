@@ -247,6 +247,8 @@ bool GeometryApp::update(float deltaTime)
 	tr_TerrainTest->m_TerrainShader->m_fogStart = m_WaterPlane->m_Location.y * 2;
 	tr_TerrainTest->m_TerrainShader->m_light = m_testLight;
 
+	m_WaterPlane->m_TerrainShader->m_noisemap = tr_TerrainTest->m_TerrainNoise;
+
 	m_testLight->m_lightPos = glm::vec3(cos(glfwGetTime()) * 25.f, 0, sin(glfwGetTime()) * 25.f);
 
 	mdl_Sponza->Update(deltaTime);
