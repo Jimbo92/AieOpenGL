@@ -47,6 +47,7 @@ public:
 	Texture* m_textureNormal;
 	Texture* m_textureSpecmap;
 	Texture* m_noisemap = nullptr;
+	Texture* m_extramap1 = nullptr;
 
 	unsigned int m_rendertargetTexture;
 
@@ -60,5 +61,7 @@ public:
 	void UpdateBones(FBXSkeleton* skeleton);
 
 	glm::vec4 m_ambientlight = glm::vec4(0.25f, 0.25f, 0.25f, 1);
+
+	float m_foamIntensity;
 };
 

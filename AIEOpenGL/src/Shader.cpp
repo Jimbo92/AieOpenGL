@@ -87,6 +87,9 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 
 	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(CurrentCamera->getProjectionView() * LocalMatrix));
 
+	unsigned int LocalMatrixUniform = glGetUniformLocation(m_programID, "LocalLocation");
+	glUniform4f(LocalMatrixUniform, LocalMatrix[3].x, LocalMatrix[3].y, LocalMatrix[3].z, LocalMatrix[3].w);
+
 	//set texture slot
 	if (m_Textures[0] != nullptr)
 	{
@@ -123,6 +126,15 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	projectionViewUniform = glGetUniformLocation(m_programID, "noisemap");
 	glUniform1i(projectionViewUniform, 3);
 
+	//Set extra map 1
+	if (m_extramap1 != nullptr)
+	{
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, m_extramap1->m_texture);
+	}
+	projectionViewUniform = glGetUniformLocation(m_programID, "extramap1");
+	glUniform1i(projectionViewUniform, 5);
+
 	//RenderTarget map
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, m_rendertargetTexture);
@@ -137,6 +149,9 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 
 	unsigned int specpowUniform = glGetUniformLocation(m_programID, "specpow");
 	glUniform1f(specpowUniform, m_specpow);
+
+	unsigned int foamIntensityUniform = glGetUniformLocation(m_programID, "foamIntensity");
+	glUniform1f(foamIntensityUniform, m_foamIntensity);
 
 	unsigned int fogstartUniform = glGetUniformLocation(m_programID, "fogStart");
 	glUniform1f(fogstartUniform, m_fogStart);

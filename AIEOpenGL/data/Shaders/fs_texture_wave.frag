@@ -7,12 +7,14 @@ in vec3 vNormal;
 in vec3 vTangent;
 in vec3 vBiTangent;
 in vec4 vPosition;
+in vec4 vWaterHeight;
 
 out vec4 FragColor; 
 
 uniform sampler2D noisemap;
 uniform sampler2D diffuse; 
 uniform sampler2D normal;
+uniform sampler2D extramap1; //foam
 uniform vec3 lightposition;
 uniform vec3 lightdirection;
 uniform vec4 lightcolor;
@@ -22,6 +24,8 @@ uniform float alpha;
 uniform float specpow;
 uniform vec3 ambient = vec3(0.0f, 0.0f, 1.0f);
 uniform float lightrange = 50.f;
+uniform vec4 LocalLocation;
+uniform float foamIntensity;
 
 vec2 nextTextCoord;
 vec2 nextTextCoord2;
@@ -105,14 +109,18 @@ void main()
 
 	vec4 noise = texture(noisemap, vTexCoord * 0.1f);
 
+	vec4 foamColor = texture(extramap1, nextTextCoord * 4.f) * 0.3f;
+	vec4 foamColor2 = texture(extramap1, nextTextCoord2 * 2.f) * 0.5f;
+
 	vec4 NoisePos;
 
-	NoisePos.y += noise.r * (512.f * 0.2f);
+	NoisePos.y += noise.r * (512.f * 0.12f) * foamIntensity;
 
-	//if (vPosition == NoisePos)
-	//{
-	//	FinalColor = vec4(1,1,1,1);
-	//}
+	float foamCoord; 
+	foamCoord += clamp((NoisePos.y - vWaterHeight.y) * 0.06f, 0.0, 1.0);
 
-	FragColor = FinalColor;
+	vec4 foam;
+	foam = (FinalColor + foamColor + foamColor2) * foamCoord;
+
+	FragColor = FinalColor + foam;
 }

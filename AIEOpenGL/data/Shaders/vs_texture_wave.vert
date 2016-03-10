@@ -10,7 +10,9 @@ out vec2 vTexCoord;
 out vec3 vTangent;
 out vec3 vBiTangent;
 out vec4 vPosition;
+out vec4 vWaterHeight;
 
+uniform vec4 LocalLocation;
 uniform mat4 ProjectionView;
 uniform sampler2D diffuse;
 uniform sampler2D normal;
@@ -48,6 +50,8 @@ void main()
 	P.y += cos((time * 10.f + Position.x) * 0.03f) * 1.0f;
 	P.y += sin((time * 10.f + Position.z) * 0.03f) * 1.0f;
 	P.y += cos((time * 10.f + Position.z) * 0.03f) * 1.0f;
+
+	vWaterHeight = LocalLocation + P;
 
 	gl_Position = ProjectionView * P;
 }
