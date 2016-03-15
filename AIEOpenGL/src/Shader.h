@@ -63,5 +63,7 @@ public:
 	glm::vec4 m_ambientlight = glm::vec4(0.25f, 0.25f, 0.25f, 1);
 
 	float m_foamIntensity;
+
+	glm::vec3 m_WaterHeight;
 };
 

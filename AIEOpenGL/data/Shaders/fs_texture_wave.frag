@@ -114,7 +114,7 @@ void main()
 
 	vec4 NoisePos;
 
-	NoisePos.y += noise.r * (512.f * 0.12f) * foamIntensity;
+	NoisePos.y += noise.r * (512.f * 0.13f) * foamIntensity;
 
 	float foamCoord; 
 	foamCoord += clamp((NoisePos.y - vWaterHeight.y) * 0.06f, 0.0, 1.0);

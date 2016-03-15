@@ -160,6 +160,9 @@ void Shader::DrawShader(Camera* CurrentCamera, glm::vec3 location, glm::vec3 sca
 	unsigned int cameraposUniform = glGetUniformLocation(m_programID, "camerapos");
 	glUniform3f(cameraposUniform, camPos.x, camPos.y, camPos.z);
 
+	unsigned int WaterHeightUniform = glGetUniformLocation(m_programID, "WaterHeight");
+	glUniform3f(WaterHeightUniform, m_WaterHeight.x, m_WaterHeight.y, m_WaterHeight.z);
+
 	if (m_light != nullptr)
 	{
 		unsigned int lightdirUniform = glGetUniformLocation(m_programID, "lightdirection");

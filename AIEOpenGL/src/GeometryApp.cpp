@@ -98,6 +98,8 @@ bool GeometryApp::startup()
 
 	tr_TerrainTest = new Terrain(m_camera);
 	tr_TerrainTest->generateGrid(512, 512);
+	Texture* m_gritMask = new Texture("./data/toontexture/gritMask.jpg");
+	tr_TerrainTest->m_TerrainShader->m_Textures[2] = m_gritMask;
 
 	m_WaterPlane = new Terrain(m_camera);
 	m_WaterPlane->generateGrid(512, 512, false);
@@ -248,9 +250,12 @@ bool GeometryApp::update(float deltaTime)
 
 	tr_TerrainTest->m_TerrainShader->m_fogStart = m_WaterPlane->m_Location.y * 2;
 	tr_TerrainTest->m_TerrainShader->m_light = m_testLight;
+	tr_TerrainTest->m_TerrainShader->m_foamIntensity = tr_TerrainTest->m_TerrainIntensity;
 
 	m_WaterPlane->m_TerrainShader->m_noisemap = tr_TerrainTest->m_TerrainNoise;
 	m_WaterPlane->m_TerrainShader->m_foamIntensity = tr_TerrainTest->m_TerrainIntensity;
+
+	tr_TerrainTest->m_TerrainShader->m_WaterHeight = m_WaterPlane->m_Location;
 
 	m_testLight->m_lightPos = glm::vec3(cos(glfwGetTime()) * 25.f, 0, sin(glfwGetTime()) * 25.f);
 

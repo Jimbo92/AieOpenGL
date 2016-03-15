@@ -9,6 +9,7 @@ out vec4 FragColor;
 
 uniform sampler2D diffuse;
 uniform sampler2D normal;
+uniform sampler2D specmap;
 uniform sampler2D noisemap;
 uniform float time;
 uniform vec3 lightdirection;
@@ -16,13 +17,16 @@ uniform vec3 lightposition;
 uniform vec4 lightcolor;
 uniform vec3 ambient = vec3(0.05f, 0.05f, 0.05f);
 uniform float lightrange = 512.f;
+uniform vec3 WaterHeight;
+uniform vec4 LocalLocation;
+uniform float foamIntensity;
 
 //fog stuff
 int fogEquation = 0;
 uniform float fogStart = 70.f;
 float fogEnd = fogStart / 2;
 float fogDensity = .04f;
-vec4 fogColor = vec4(0.0f, 0.5f, 0.5f, 1.f);
+vec4 fogColor = vec4(0.0f, 0.2f, 0.2f, 1.f);
 
 vec2 nextTextCoord;
 
@@ -73,6 +77,7 @@ void main()
 
 	vec4 TextureColor = texture(diffuse, nextTextCoord * 4);
 	vec4 TextureColor2 = texture(normal, nextTextCoord * 4);
+	vec4 GritMask = texture(specmap, nextTextCoord);
 	vec4 NoiseColor = texture(noisemap, nextTextCoord * 0.1f);
 
 	//FragColor = NoiseColor.rrrr;
@@ -94,5 +99,21 @@ void main()
 	//fog
 	float fogCoord = abs(vEyePos.y / vEyePos.w);
 
-	FragColor = mix(vec4((EndColor.rgb * d) + amb.rgb, 1), fogColor, setupFog(vPosition.y));
+	float NoiseYPos;
+	NoiseYPos += NoiseColor.r * (512.f * 0.07f) * foamIntensity;
+
+	float NoiseYPosWet;
+	NoiseYPosWet += NoiseColor.r * (512.f * 0.085f) * foamIntensity;
+
+	float ShoreLine = clamp((WaterHeight.y - NoiseYPos) * 0.1f, 0.0, 0.7);
+
+	float ShoreLineWet = clamp((WaterHeight.y - NoiseYPosWet) * 0.1f, 0.0, 0.7);
+
+	vec4 ShoreSand = TextureColor * ShoreLine;
+
+	vec4 ShoreSandWet = (EndColor - EndColor * 4.f) * ShoreLineWet;
+
+	EndColor = EndColor + ShoreSandWet + ShoreSand;
+
+	FragColor = mix(vec4(EndColor.rgb, 1) * d + amb, fogColor, setupFog(vPosition.y));
 }
