@@ -18,6 +18,7 @@
 #include <ParticleEmitter.h>
 #include <Terrain.h>
 #include <BoundingObj.h>
+#include <Sound.h>
 
 class Camera;
 
@@ -32,7 +33,6 @@ public:
 
 	virtual bool update(float deltaTime);
 	virtual void draw();
-
 
 private:
 	Camera*		m_camera;
@@ -76,6 +76,8 @@ private:
 
 	Shader* m_postProcessShader;
 
+	Sound* m_TestSound;
+
 	ParticleEmitter* m_testEmitter;
 
 	unsigned int m_fbo;
@@ -83,8 +85,6 @@ private:
 	unsigned int m_fboDepth;
 
 	TwBar* m_MainTweakBar;
-
-	
 
 	//Tweak Bar funcs
 	static void OnMouseButton(GLFWwindow*, int b, int a, int m)

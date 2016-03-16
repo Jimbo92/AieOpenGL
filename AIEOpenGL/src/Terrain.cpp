@@ -69,17 +69,15 @@ void Terrain::generateGrid(unsigned int rows, unsigned int cols, bool withPerlin
 		m_TerrainShader = new Shader("./data/Shaders/vs_terrain.vert", "./data/Shaders/fs_terrain.frag", TerrainGrass, TerrainDirt);
 
 		//generate perlin noise
-		int octaves = 6;
-
 		perlin_data = new float[dims * dims];
-		float scale = (1.f / dims) * 6;
+		float scale = (1.f / dims) * m_scaleoffset;
 		int Seed = rand();
 		for (int x = 0; x < dims; x++)
 		{
 			for (int y = 0; y < dims; y++)
 			{
-				float amplitude = 1.0f;
-				float persistence = 0.3f;
+				float amplitude = m_amplitude;
+				float persistence = m_persistence;
 				perlin_data[y * dims + x] = 0;
 
 				for (int o = 0; o < octaves; o++)

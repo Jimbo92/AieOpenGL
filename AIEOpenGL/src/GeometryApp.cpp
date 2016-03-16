@@ -12,6 +12,7 @@
 
 #include <stb_image.h>
 
+
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
@@ -45,6 +46,9 @@ bool GeometryApp::startup()
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 
 	m_testLight = new Light(glm::vec3(1.f, 0.5f, 0.5f), glm::vec3(0,10,0), glm::vec4(1,1,1,1), 1.f);
+
+	m_TestSound = new Sound("./data/audio/oceanambient.wav");
+	m_TestSound->PlaySound();
 
 
 	//=================================//Sphere Bounding Test//=============================//
@@ -144,6 +148,10 @@ bool GeometryApp::startup()
 	TwAddVarRW(m_MainTweakBar, "Terrain Intensity", TW_TYPE_FLOAT, &tr_TerrainTest->m_TerrainIntensity, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "SizeCols", TW_TYPE_INT32, &tr_TerrainTest->m_cols, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "SizeRows", TW_TYPE_INT32, &tr_TerrainTest->m_rows, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "Octaves", TW_TYPE_INT32, &tr_TerrainTest->octaves, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "Amplitude", TW_TYPE_FLOAT, &tr_TerrainTest->m_amplitude, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "Persistence", TW_TYPE_FLOAT, &tr_TerrainTest->m_persistence, "group='Terrain Settings'");
+	TwAddVarRW(m_MainTweakBar, "ScaleOffset", TW_TYPE_FLOAT, &tr_TerrainTest->m_scaleoffset, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "Scale", TW_TYPE_FLOAT, &tr_TerrainTest->m_scale, "group='Terrain Settings'");
 	TwAddVarRW(m_MainTweakBar, "Refresh", TW_TYPE_BOOLCPP, &tr_TerrainTest->m_RefreshTerrain, "group='Terrain Settings'");
 
@@ -200,6 +208,8 @@ void GeometryApp::shutdown()
 	delete m_camera;
 	Gizmos::destroy();
 
+
+
 	//mdl_Sponza->CleanUpFBX(mdl_Sponza->m_FBXModel);
 
 	// destroy our window properly
@@ -218,6 +228,8 @@ bool GeometryApp::update(float deltaTime)
 
 	// clear the gizmos out for this frame
 	Gizmos::clear();
+
+	m_TestSound->Update();
 
 	//=================================//Sphere Bounding Test//=============================//
 	vec4 plane(0, 1, 0, -1);

@@ -18,6 +18,12 @@ struct Vertex
 class Terrain
 {
 public:
+	//perlin data
+	int octaves = 6;
+	float m_amplitude = 1.0f;
+	float m_persistence = 0.3f;
+	float m_scaleoffset = 6.f;
+
 	Terrain(Camera* camera = nullptr);
 	~Terrain();
 
